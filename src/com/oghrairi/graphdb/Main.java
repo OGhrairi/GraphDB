@@ -1,4 +1,4 @@
-package com.company;
+package com.oghrairi.graphdb;
 
 public class Main {
 
