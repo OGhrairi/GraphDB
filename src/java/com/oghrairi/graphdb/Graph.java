@@ -1,19 +1,12 @@
 package com.oghrairi.graphdb;
 import java.util.*;
 
- /*calls to this class should be independent of the graph representation
-    Methods need to be able to create a graph object, either empty, with some input node(s)/edge(s), or from a
-    storage file (I/O operations)
-    also, need to be able to query a graph and return some representation of the result (probably start with a boolean exists? query)
-    Graph properties which need representing:
-        -Edge, vertex Ids
-        -Edge, vertex Labels
-        -Edge, vertex property key/value pairs
-        -Topology; in the form of an adjacency matrix, use edge id instead of 1/0
+ /*
+ Graph representation currently consists of a set of vertex objects and a set of edge objects (plus two integer sets that
+ keep track of vertex and edge counts).
+ vertex object contains vertex id, vertex label, and set of edge ids going out from it
+ edge object contains edge id, edge label, source and destination vertex ids
      */
-
-
-
 
 public class Graph {
     //at each step of a search, need to see label of outgoing edge + vertex reached from that edge
