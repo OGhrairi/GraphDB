@@ -61,15 +61,21 @@ public class Graph {
         count[1] = edges.size();
         return count;
     }
-    public void addVertex(String label){
-        Integer id;
-        if(vertexList.size() > 0){
-            id = Collections.max(vertexList) + 1;
-        }else{
-            id = 0;
+    public void addVertex(String label, Integer id){
+        boolean isIn = false;
+        for(int i : vertexList){
+            if(i == id){
+                isIn = true;
+                break;
+            }
         }
-        vertices.add(new Vertex(label,id));
-        vertexList.add(id);
+        if(!isIn){
+            vertices.add(new Vertex(label,id));
+            vertexList.add(id);
+        }else{
+            System.out.println("error: vertex id already exists");
+        }
+
     }
     public void addEdge(String label, Integer source, Integer destination){
         Integer id;
@@ -112,7 +118,7 @@ public class Graph {
             out += "    LABEL: ";
             out += e.label;
             out += "\nPATH: ";
-            out += e.source + " ------> " + e.destination;
+            out += e.source + " ------> " + e.destination + "\n";
         }
         return out;
     }
