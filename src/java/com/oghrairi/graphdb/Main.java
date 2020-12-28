@@ -11,6 +11,7 @@ public class Main {
         test1.addVertex("person");
         test1.addEdge("knows",0,1);
         test1.addEdge("likes",0,2);
+        test1.addEdge("knows",2,1);
         System.out.println(test1.Query("knows"));
         System.out.println(test1.Query("likes"));
         System.out.println(test1.Query("loves"));
