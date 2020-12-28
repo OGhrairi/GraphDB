@@ -1,6 +1,5 @@
 package com.oghrairi.graphdb;
 
-import java.sql.Struct;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -10,14 +9,14 @@ import java.util.regex.Pattern;
 
 //Test data: L1(1,2) L2(2,3) L1(1,3)
 
-public class Query {
-    private Graph target;
-    private Graph queryGraph;
+public class QueryV1 {
+    private GraphV1 target;
+    private GraphV1 queryGraph;
 //constructor begins building process. prompts the user, but this can eventually be taken out of this class
-    public Query(Graph target) {
+    public QueryV1(GraphV1 target) {
         this.target = target;
         //create the query graph
-        queryGraph = new Graph("query");
+        queryGraph = new GraphV1("query");
         //scanner object for input
         Scanner scan = new Scanner(System.in);
         /* This part is commented out for now as I'm using premade test data, this will be used for actual human input

@@ -3,18 +3,16 @@ package com.oghrairi.graphdb;
 public class Main {
 
     public static void main(String[] args) {
-       /* String gname = "graph1";
-        String v1name = "vertex 1";
-        String v2name = "vertex 2";
-        String e1name = "edge 1";
-	    Graph g = new Graph(gname);
-	    g.addVertex(v1name);
-	    g.addVertex(v2name);
-	    g.addEdge(e1name,0,1);
-	    System.out.println(g.getVertices());
-	    System.out.println(g.getEdges());
-	    */
-        Graph g = new Graph("graph");
-        Query q = new Query(g);
+
+        Graph test1 = new Graph("testGraph");
+        System.out.println(test1.getGraphName());
+        test1.addVertex("person");
+        test1.addVertex("person");
+        test1.addVertex("person");
+        test1.addEdge("knows",0,1);
+        test1.addEdge("likes",0,2);
+        System.out.println(test1.Query("knows"));
+        System.out.println(test1.Query("likes"));
+        System.out.println(test1.Query("loves"));
     }
 }
