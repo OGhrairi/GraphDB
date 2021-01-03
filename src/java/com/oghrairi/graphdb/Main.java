@@ -23,5 +23,7 @@ public class Main {
         System.out.println(test1.Query("knows/likes/knows")); //should return 0->1, 0->0, 2->0, 2->1
         System.out.println(test1.Query("knows-")); //should return 1->0, 3->0, 0->2, 1->2
         System.out.println(test1.Query("knows/knows-")); //should return 2->0, 2->2, 0->0, 0->2
+        System.out.println(test1.Query("knows+")); //should return 2->0, 0->3, 2->1, 2->3, 0->1
+        System.out.println(test1.Query("likes/knows+/likes"));
     }
 }

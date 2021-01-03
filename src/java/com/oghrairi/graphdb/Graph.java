@@ -36,6 +36,15 @@ public class Graph {
         }
 
     }
+    public Integer getEdgeCount(){
+        Integer count = 0;
+        for(Integer v : vertices.keySet()){
+            for(Edge e : vertices.get(v).getEdges()){
+                count+=1;
+            }
+        }
+        return count;
+    }
 //query iteration number two, can handle concatenation of edge labels into a path query
     public String Query(String queryPath){
         System.out.println("-------------------");
@@ -57,6 +66,32 @@ public class Graph {
                 //at each step of the path, look at every vertex(or state if you want to look at is as the automata)
                 //that the search is currently in, and iterate through them
                 for(Integer vert : current) {
+                    //if label has a '+' in it, this represents the transitive closure of the label.
+                    //first implementation here basically builds a new path filled with the label n times, where n is
+                    //the total number of edges in the graph currently, and then runs through that path in the same
+                    //way as the parent path query, but instead of returning only the end vertices, returns all vertices
+                    //that were reachable along the way
+                    if(w.contains("+")){
+                        String sub = w.substring(0,w.length()-1);
+                        ArrayList<Integer> reachable = new ArrayList<>();
+                        ArrayList<Integer> l1 = new ArrayList<>();
+                        ArrayList<Integer> l2 = new ArrayList<>();
+                        l1.add(vert);
+                        for(int i=0; i<getEdgeCount(); i++){
+                            for(Integer v2 : l1){
+                                for(Edge e : vertices.get(v2).getEdges()){
+                                    if(e.label.equals(sub)){
+                                        l2.add(e.destinationId);
+                                        reachable.add(e.destinationId);
+                                    }
+                                }
+                            }
+                            l1.clear();
+                            l1.addAll(l2);
+                            l2.clear();
+                        }
+                        next.addAll(reachable);
+                    }
                     //if the label has a '-' in it, this is an inverse label. instead of looking at edges leading out
                     //from current vertices, look at the rest of the graph and find edges going into the current vertices
                     if(w.contains("-")){
@@ -67,7 +102,9 @@ public class Graph {
                                 }
                             }
                         }
-                    }else{
+                    }
+
+                    else{
                         //for each current state, iterate through its edges
                         for (Edge e : vertices.get(vert).getEdges()) {
                             //for each edge, if the label matches the current label in the path, add its destination to the
@@ -78,6 +115,7 @@ public class Graph {
                         }
                     }
                 }
+
                 current.clear();
                 current.addAll(next);
                 next.clear();
