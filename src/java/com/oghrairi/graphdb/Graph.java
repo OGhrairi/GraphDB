@@ -52,17 +52,29 @@ public class Graph {
             ArrayList<Integer> next = new ArrayList<>();
             //In my head this runs a bit like an automata; it runs through the input word (i.e. the label array)
             //and at each step it records every step that can be reached by applying the label as a transition, then repeats.
-            //basically, it's a fairly dumb exhaustive search of a NFA
+            //basically, it's a fairly dumb exhaustive search of an NFA
             for(String w : path){
                 //at each step of the path, look at every vertex(or state if you want to look at is as the automata)
                 //that the search is currently in, and iterate through them
-                for(Integer vert : current){
-                    //for each current state, iterate through its edges
-                    for(Edge e : vertices.get(vert).getEdges()){
-                        //for each edge, if the label matches the current label in the path, add its destination to the
-                        //next iteration of the search
-                        if(e.label.equals(w)){
-                            next.add(e.destinationId);
+                for(Integer vert : current) {
+                    //if the label has a '-' in it, this is an inverse label. instead of looking at edges leading out
+                    //from current vertices, look at the rest of the graph and find edges going into the current vertices
+                    if(w.contains("-")){
+                        for (Integer v2 : vertices.keySet()){
+                            for(Edge e : vertices.get(v2).getEdges()){
+                                if(e.label.equals(w.substring(0,w.length()-1))&&e.destinationId.equals(vert)){
+                                    next.add(v2);
+                                }
+                            }
+                        }
+                    }else{
+                        //for each current state, iterate through its edges
+                        for (Edge e : vertices.get(vert).getEdges()) {
+                            //for each edge, if the label matches the current label in the path, add its destination to the
+                            //next iteration of the search
+                            if (e.label.equals(w)) {
+                                next.add(e.destinationId);
+                            }
                         }
                     }
                 }
