@@ -45,8 +45,25 @@ public class Graph {
         }
         return count;
     }
+
+    //WIP class for proper parsing
+    public void q2(String queryPath){
+        StringTokenizer queryTokens = new StringTokenizer(queryPath,"()/-+#",true);
+        while(queryTokens.hasMoreTokens()){
+            System.out.println(queryTokens.nextToken());
+        }
+    }
+    public String cq(String query){
+        String output = "";
+        String[] rpqs = query.split(" ");
+        for(String str : rpqs){
+            String rpq = str.split("\\(")[0];
+            output += query(rpq)+"|| ";
+        }
+        return output;
+    }
 //query iteration number two, can handle concatenation of edge labels into a path query
-    public String Query(String queryPath){
+    public String query(String queryPath){
         System.out.println("-------------------");
         //very basic input parsing, a sequence of labels, separated by a slash. this is split into an array of labels
         String[] path = queryPath.split("/");
