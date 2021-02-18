@@ -1,9 +1,23 @@
 package com.oghrairi.graphdb;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class Main {
 
     public static void main(String[] args) {
 
+        QueryParser parser = new QueryParser();
+        parser.parse("(x1,x2)<-[(knows/likes+)-](x1,x2)");
+
+
+        /*
         Graph test1 = new Graph("testGraph");
         System.out.println(test1.getGraphName());
         test1.addVertex("person");
@@ -27,5 +41,7 @@ public class Main {
         System.out.println(test1.query("likes/knows+/likes")); //returns 3->2 1->2
         //test1.q2("((knows)-/likes)+/knows#knows");
         System.out.println(test1.cq("likes/knows(x,a1) knows-(a1,y)"));
+    */
     }
+
 }
