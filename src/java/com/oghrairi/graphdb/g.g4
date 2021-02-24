@@ -23,7 +23,7 @@ cexpression :
 
 expression :
     expression SLASH expression # slash
-   |  LB expression RB # bracket
+   | LB expression RB # bracket
    | LB expression RB (PLUS|MINUS) # bracketOp
    | EDGE # atom
    | EDGE (PLUS|MINUS) #atomOp

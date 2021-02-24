@@ -12,9 +12,14 @@ import java.nio.charset.StandardCharsets;
 public class Main {
 
     public static void main(String[] args) {
+        String test1 = ("(x1,x2)<-[(knows/likes+)-](x1,x2)");
+        CharStream stream = CharStreams.fromString(test1);
+        gLexer gl = new gLexer(stream);
+        CommonTokenStream tokens = new CommonTokenStream(gl);
+        gParser parser = new gParser(tokens);
+        ParseTree parseTree = parser.crpq();
+        ParseTreeWalker.DEFAULT.walk(new QueryListener(), parseTree);
 
-        QueryParser parser = new QueryParser();
-        parser.parse("(x1,x2)<-[(knows/likes+)-](x1,x2)");
 
 
         /*
