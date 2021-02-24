@@ -8,17 +8,25 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 public class Main {
 
     public static void main(String[] args) {
-        String test1 = ("(x1,x2)<-[(knows/likes+)-](x1,x2)");
-        CharStream stream = CharStreams.fromString(test1);
-        gLexer gl = new gLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(gl);
-        gParser parser = new gParser(tokens);
-        ParseTree parseTree = parser.crpq();
-        ParseTreeWalker.DEFAULT.walk(new QueryListener(), parseTree);
+        String testString = ("(x1,x2)<-[(knows/likes+)/knows-|(likes/loves)+](x1,x2)");
+        Graph test1 = new Graph("testGraph");
+        test1.addVertex("person");
+        test1.addVertex("person");
+        test1.addVertex("person");
+        test1.addVertex("person");
+        test1.addEdge("knows",0,1);
+        test1.addEdge("likes",1,2);
+        test1.addEdge("knows",2,0);
+        test1.addEdge("knows",0,3);
+        test1.addEdge("likes",3,2);
+        test1.addEdge("knows",2,1);
+        Query query = new Query();
+        HashSet<String> str = query.RunQuery(testString,test1);
 
 
 
