@@ -8,18 +8,26 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Query {
     private String queryString;
     private Graph graph;
     private HashSet<String> outputEdges;
+    private Map<Integer, Vertex> vertices;
     public Query() {
+        outputEdges = new HashSet<>();
     }
     public HashSet<String> RunQuery(String queryString, Graph graph){
         //This is the method that runs the query, outputs a hashset of vertex pairs stored as a string
         this.queryString = queryString;
         this.graph = graph;
-        //these lines are some boilerplate code needed to generate and use the parse tree
+        this.vertices =graph.getVertices();
+        //these lines are some code needed to generate and use the parse tree;
+        //convert query string into a charstream, generate a lexer from the lexer class created from my grammar with
+        //the charstream as an input, take the tokens from that lexer into a tokenstream, feed that stream into a parser
+        //then use a tree walker to step through the generated parse tree
         CharStream stream = CharStreams.fromString(queryString);
         gLexer gl = new gLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(gl);
@@ -49,7 +57,7 @@ public class Query {
             }
         }
 
-        //this method runs when the tree enteres the root of a query expression, including the query string and given bound variables.
+        //this method runs when the tree enters the root of a query expression, including the query string and given bound variables.
         //From this method, the other listener methods are abandoned in favour of a personalised approach
         @Override
         public void enterCexpression(gParser.CexpressionContext ctx) {
@@ -71,7 +79,7 @@ public class Query {
         $OrContext
          */
         public void queryApplyer(ParseTree subtree){
-            HashSet<String> outputPairs = new HashSet<>();
+
             //this method will (probably recursively) handle applying the right query algorithms to the right sections of a query string
             int childCount = subtree.getChildCount();
             //get class of current node in tree
@@ -82,10 +90,13 @@ public class Query {
             //decide what the next step is depending on the current node's class
             switch (nodeClass){
                 case "$AtomContext":
-                    outputPairs.addAll(edgeQuery(nodeText));
+                    System.out.println("entering atom");
+                    edgeQuery(nodeText,"none");
                     break;
                 case "$AtomOpContext":
-
+                    String operator = nodeText.substring(nodeText.length()-1);
+                    edgeQuery(nodeText.substring(0,nodeText.length()-1),operator);
+                    break;
             }
             for (int i=0; i<childCount; i++){
                 String cls = subtree.getChild(i).getClass().getName();
@@ -101,16 +112,79 @@ public class Query {
 
             }
 
-        }
-        public HashSet<String> edgeQuery (String edge, String operator){
-            HashSet<String> pairs = new HashSet<>();
 
+        }
+        public HashSet<String> edgeQuery (String edge, String operator, Set<String> startVertices){
+            HashSet<String> pairs = new HashSet<>();
+            Set<Integer> inverts = new HashSet<>();
+            if(startVertices.contains("none")){
+                inverts = vertices.keySet();
+            }else{
+                for (String s : startVertices){
+                    inverts.add(Integer.parseInt(s));
+                }
+            }
+            System.out.println("using edge: "+edge);
+            for (Integer v : inverts){
+                if(operator.equals("none")){
+
+                    for (Edge e : vertices.get(v).getEdges()) {
+                        //for each edge, if the label matches the current label in the path, add its destination to the
+                        //next iteration of the search
+                        if (e.label.equals(edge)) {
+                            System.out.println("match found : "+v+"->"+e.destinationId);
+                            pairs.add(v+"->"+e.destinationId);
+                            outputEdges.add(v+"->"+e.destinationId);
+
+                        }
+                    }
+
+                }else if(operator.equals("-")){
+                    for (Integer v2 : vertices.keySet()){
+                        for(Edge e : vertices.get(v2).getEdges()){
+                            if(e.label.equals(edge)&&e.destinationId.equals(v)){
+                                pairs.add(v+"->"+v2);
+                                outputEdges.add(v+"->"+v2);
+                                System.out.println("match found : "+v+"->"+v2);
+                            }
+                        }
+                    }
+                }
+                else if(operator.equals("+")){
+                    ArrayList<Integer> reachable = new ArrayList<>();
+                    ArrayList<Integer> l1 = new ArrayList<>();
+                    ArrayList<Integer> l2 = new ArrayList<>();
+                    l1.add(v);
+                    for(int i=0; i<graph.getEdgeCount(); i++){
+                        for(Integer v2 : l1){
+                            for(Edge e : vertices.get(v2).getEdges()){
+                                if(e.label.equals(edge)){
+                                    l2.add(e.destinationId);
+                                    reachable.add(e.destinationId);
+                                }
+                            }
+                        }
+                        l1.clear();
+                        l1.addAll(l2);
+                        l2.clear();
+                    }
+                    for(Integer i : reachable){
+                        pairs.add(v+"->"+i);
+                        outputEdges.add(v+"->"+i);
+                        System.out.println("match found : "+v+"->"+i);
+                    }
+
+                }
+
+            }
 
 
             return pairs;
         }
-        public HashSet<String> edgeQuery(String edge){
-            return(edgeQuery(edge, "none"));
+        public HashSet<String> edgeQuery (String edge, String operator){
+            HashSet<String> sv = new HashSet<>();
+            sv.add("none");
+            return edgeQuery(edge, operator, sv);
         }
     }
 
