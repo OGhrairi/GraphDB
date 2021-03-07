@@ -6,10 +6,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class Query {
     private String queryString;
@@ -67,7 +66,6 @@ public class Query {
             boundVariables[1] = ctx.getChild(childCount-2).getText();
             ParseTree exp = ctx.getChild(1);
             queryApplyer(exp);
-
         }
         /*
         class names of importance:
@@ -78,74 +76,93 @@ public class Query {
         $BracketContext
         $OrContext
          */
-        public void queryApplyer(ParseTree subtree){
+        public HashSet<List<Integer>> queryApplyer(ParseTree subtree){
 
             //this method will (probably recursively) handle applying the right query algorithms to the right sections of a query string
             int childCount = subtree.getChildCount();
             //get class of current node in tree
             String nodeClass = subtree.getClass().getName().substring(subtree.getClass().getName().indexOf("$"));
-            System.out.println(subtree.getText());
             String nodeText = subtree.getText();
-            ArrayList<Integer> nextChildren = new ArrayList<>();
+            HashSet<List<Integer>>pairs = new HashSet<>();
+            outputEdges.clear();
             //decide what the next step is depending on the current node's class
             switch (nodeClass){
                 case "$AtomContext":
-                    System.out.println("entering atom");
-                    edgeQuery(nodeText,"none");
+                    pairs = edgeQuery(nodeText,"none");
                     break;
                 case "$AtomOpContext":
                     String operator = nodeText.substring(nodeText.length()-1);
-                    edgeQuery(nodeText.substring(0,nodeText.length()-1),operator);
+                    pairs = edgeQuery(nodeText.substring(0,nodeText.length()-1),operator);
                     break;
+                case "$SlashContext":
+                    //procedure for concatenating edges of a path
+                    //First, recursively call this method on the two parts being concatenated to return sets
+                    //of vertex pairs
+                    HashSet<List<Integer>> out1 = queryApplyer(subtree.getChild(0));
+                    HashSet<List<Integer>> out2 = queryApplyer(subtree.getChild(2));
+                    HashSet<List<Integer>> combined = new HashSet<>();
+                    HashSet<List<Integer>> out = new HashSet<>();
+                    for(List<Integer> pair1 : out1){
+                        for(List<Integer> pair2 : out2){
+                            Integer[] comb = new Integer[4];
+                            comb[0] = pair1.get(0);
+                            comb[1] = pair1.get(1);
+                            comb[2] = pair2.get(0);
+                            comb[3] = pair2.get(1);
+                            combined.add(Arrays.asList(comb));
+                        }
+                    }
+                    outputEdges.clear();
+                    for(List<Integer> pair : combined){
+                        if(pair.get(1)==pair.get(2)){
+                            System.out.println("Match: "+pair.get(0)+","+pair.get(1)+","+pair.get(2)+","+pair.get(3));
+                            Integer[] i = new Integer[2];
+                            i[0] = pair.get(0);
+                            i[1] = pair.get(3);
+                            out.add(Arrays.asList(i));
+                        }
+                    }
+                    pairs=out;
+                    break;
+                case "$BracketContext":
+                    System.out.println("bracket");
+                    break;
+                case "$BracketOpContext":
+                    String op = subtree.getChild(3).getText();
+                    HashSet<List<Integer>> inner = queryApplyer(subtree.getChild(1));
+                    System.out.println(inner.size());
             }
-            for (int i=0; i<childCount; i++){
-                String cls = subtree.getChild(i).getClass().getName();
-                if(cls.indexOf("$")>=0){
-                    nextChildren.add(i);
-                    cls = cls.substring(cls.indexOf("$"));
-                }
+            for(List<Integer> pair : pairs){
+                String str = Integer.toString(pair.get(0));
+                str+="->";
+                str+= Integer.toString(pair.get(1));
+                outputEdges.add(str);
             }
-            for(int child : nextChildren){
-                System.out.println("********************");
-
-                queryApplyer(subtree.getChild(child));
-
-            }
-
-
+            return pairs;
         }
-        public HashSet<String> edgeQuery (String edge, String operator, Set<String> startVertices){
-            HashSet<String> pairs = new HashSet<>();
-            Set<Integer> inverts = new HashSet<>();
-            if(startVertices.contains("none")){
-                inverts = vertices.keySet();
-            }else{
-                for (String s : startVertices){
-                    inverts.add(Integer.parseInt(s));
-                }
-            }
-            System.out.println("using edge: "+edge);
+        public HashSet<List<Integer>> edgeQuery (String edge, String operator){
+            HashSet<List<Integer>> pairs = new HashSet<>();
+            Set<Integer> inverts = vertices.keySet();
             for (Integer v : inverts){
                 if(operator.equals("none")){
-
                     for (Edge e : vertices.get(v).getEdges()) {
                         //for each edge, if the label matches the current label in the path, add its destination to the
                         //next iteration of the search
                         if (e.label.equals(edge)) {
-                            System.out.println("match found : "+v+"->"+e.destinationId);
-                            pairs.add(v+"->"+e.destinationId);
-                            outputEdges.add(v+"->"+e.destinationId);
-
+                            Integer[] p = new Integer[2];
+                            p[0]=v;
+                            p[1]=e.destinationId;
+                            pairs.add(Arrays.asList(p));
                         }
                     }
-
                 }else if(operator.equals("-")){
                     for (Integer v2 : vertices.keySet()){
                         for(Edge e : vertices.get(v2).getEdges()){
                             if(e.label.equals(edge)&&e.destinationId.equals(v)){
-                                pairs.add(v+"->"+v2);
-                                outputEdges.add(v+"->"+v2);
-                                System.out.println("match found : "+v+"->"+v2);
+                                Integer[] p = new Integer[2];
+                                p[0]=v;
+                                p[1]=v2;
+                                pairs.add(Arrays.asList(p));
                             }
                         }
                     }
@@ -169,22 +186,17 @@ public class Query {
                         l2.clear();
                     }
                     for(Integer i : reachable){
-                        pairs.add(v+"->"+i);
-                        outputEdges.add(v+"->"+i);
-                        System.out.println("match found : "+v+"->"+i);
+                        Integer[] p = new Integer[2];
+                        p[0]=v;
+                        p[1]=i;
+                        pairs.add(Arrays.asList(p));
+
                     }
 
                 }
 
             }
-
-
             return pairs;
-        }
-        public HashSet<String> edgeQuery (String edge, String operator){
-            HashSet<String> sv = new HashSet<>();
-            sv.add("none");
-            return edgeQuery(edge, operator, sv);
         }
     }
 

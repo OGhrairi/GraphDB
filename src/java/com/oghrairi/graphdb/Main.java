@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         //String testString = ("(x1,x2)<-[(knows/likes+)/knows-|(likes/loves)+](x1,x2)");
-        String testString = ("(x1,x2)<-[knows+](x1,x2)");
+        String testString = ("(x1,x2)<-[(knows/likes)+](x1,x2)");
         Graph test1 = new Graph("testGraph");
         test1.addVertex("person");
         test1.addVertex("person");
