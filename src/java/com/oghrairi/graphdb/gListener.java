@@ -38,18 +38,6 @@ public interface gListener extends ParseTreeListener {
 	 */
 	void exitCexpression(gParser.CexpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code bracketOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterBracketOp(gParser.BracketOpContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code bracketOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitBracketOp(gParser.BracketOpContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code or}
 	 * labeled alternative in {@link gParser#expression}.
 	 * @param ctx the parse tree
@@ -97,16 +85,4 @@ public interface gListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAtom(gParser.AtomContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code atomOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterAtomOp(gParser.AtomOpContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code atomOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitAtomOp(gParser.AtomOpContext ctx);
 }

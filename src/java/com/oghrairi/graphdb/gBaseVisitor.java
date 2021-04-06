@@ -38,13 +38,6 @@ public class gBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements gVis
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBracketOp(gParser.BracketOpContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitOr(gParser.OrContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -67,11 +60,4 @@ public class gBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements gVis
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitAtom(gParser.AtomContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAtomOp(gParser.AtomOpContext ctx) { return visitChildren(ctx); }
 }

@@ -38,110 +38,86 @@ public class Query {
     //subclass which inherits from Antlr base listener class, walks through the generated parse tree and runs certain
     //functions at different classes of nodes
     public class QueryListener extends gBaseListener{
-        private ArrayList<String> conjunctiveVariables;
-
-
-        public QueryListener() {
-            conjunctiveVariables = new ArrayList<String>();
+        Stack<HashSet<String>> queryStack;
+        public QueryListener(){
+            queryStack = new Stack<>();
         }
-
-        //this method runs when the parser reaches the conjunctive variable declaration part of the query, and
-        //stores those variables in an arraylist
         @Override
-        public void enterVariables(gParser.VariablesContext ctx) {
-            int childCount = ctx.getChildCount();
-            for (int i=1; i<childCount-2;i=i+2){
-                String child = ctx.getChild(i).getText();
-                conjunctiveVariables.add(child);
+        public void exitCexpression(gParser.CexpressionContext ctx){
+            //child 1 = expression, child 4 = var 1, then every other child = the next var
+            //pop single pairs list as output
+            int cc = ctx.getChildCount();
+            int varCount = (cc-4)/2;
+            if(!queryStack.empty()){
+                outputEdges = queryStack.pop();
             }
-        }
 
-        //this method runs when the tree enters the root of a query expression, including the query string and given bound variables.
-        //From this method, the other listener methods are abandoned in favour of a personalised approach
+        }
         @Override
-        public void enterCexpression(gParser.CexpressionContext ctx) {
-            String[] boundVariables = new String[2];
-            int childCount = ctx.getChildCount();
-            boundVariables[0] = ctx.getChild(childCount-4).getText();
-            boundVariables[1] = ctx.getChild(childCount-2).getText();
-            ParseTree exp = ctx.getChild(1);
-            queryApplyer(exp);
-        }
-        /*
-        class names of importance:
-        $SlashContext
-        $AtomContext
-        $AtomOpContext
-        $BracketOpContext
-        $BracketContext
-        $OrContext
-         */
-        public HashSet<List<Integer>> queryApplyer(ParseTree subtree){
-
-            //this method will (probably recursively) handle applying the right query algorithms to the right sections of a query string
-            int childCount = subtree.getChildCount();
-            //get class of current node in tree
-            String nodeClass = subtree.getClass().getName().substring(subtree.getClass().getName().indexOf("$"));
-            String nodeText = subtree.getText();
-            HashSet<List<Integer>>pairs = new HashSet<>();
-            outputEdges.clear();
-            //decide what the next step is depending on the current node's class
-            switch (nodeClass){
-                case "$AtomContext":
-                    pairs = edgeQuery(nodeText,"none");
-                    break;
-                case "$AtomOpContext":
-                    String operator = nodeText.substring(nodeText.length()-1);
-                    pairs = edgeQuery(nodeText.substring(0,nodeText.length()-1),operator);
-                    break;
-                case "$SlashContext":
-                    //procedure for concatenating edges of a path
-                    //First, recursively call this method on the two parts being concatenated to return sets
-                    //of vertex pairs
-                    HashSet<List<Integer>> out1 = queryApplyer(subtree.getChild(0));
-                    HashSet<List<Integer>> out2 = queryApplyer(subtree.getChild(2));
-                    HashSet<List<Integer>> combined = new HashSet<>();
-                    HashSet<List<Integer>> out = new HashSet<>();
-                    for(List<Integer> pair1 : out1){
-                        for(List<Integer> pair2 : out2){
-                            Integer[] comb = new Integer[4];
-                            comb[0] = pair1.get(0);
-                            comb[1] = pair1.get(1);
-                            comb[2] = pair2.get(0);
-                            comb[3] = pair2.get(1);
-                            combined.add(Arrays.asList(comb));
-                        }
-                    }
-                    outputEdges.clear();
-                    for(List<Integer> pair : combined){
-                        if(pair.get(1)==pair.get(2)){
-                            System.out.println("Match: "+pair.get(0)+","+pair.get(1)+","+pair.get(2)+","+pair.get(3));
-                            Integer[] i = new Integer[2];
-                            i[0] = pair.get(0);
-                            i[1] = pair.get(3);
-                            out.add(Arrays.asList(i));
-                        }
-                    }
-                    pairs=out;
-                    break;
-                case "$BracketContext":
-                    System.out.println("bracket");
-                    break;
-                case "$BracketOpContext":
-                    String op = subtree.getChild(3).getText();
-                    HashSet<List<Integer>> inner = queryApplyer(subtree.getChild(1));
-                    System.out.println(inner.size());
+        public void enterAtom(gParser.AtomContext ctx){
+            //run atom search, push to stack
+            //for atoms, child 0 = edge, child 1 = operator
+            System.out.println("entered atom, stack size: "+queryStack.size());
+            String edge = ctx.getChild(0).getText();
+            String operator;
+            if(ctx.getChildCount()==1){
+                operator="none";
+            }else{
+                operator=ctx.getChild(1).getText();
             }
-            for(List<Integer> pair : pairs){
-                String str = Integer.toString(pair.get(0));
-                str+="->";
-                str+= Integer.toString(pair.get(1));
-                outputEdges.add(str);
-            }
-            return pairs;
+            queryStack.push(edgeQuery(edge,operator));
         }
-        public HashSet<List<Integer>> edgeQuery (String edge, String operator){
-            HashSet<List<Integer>> pairs = new HashSet<>();
+        @Override
+        public void exitSlash(gParser.SlashContext ctx){
+            //pop two lists, run concatenation, push single list
+            HashSet<String> step2 = queryStack.pop();
+            HashSet<String> step1 = queryStack.pop();
+            HashSet<String> combinations = new HashSet<>();
+            for(String s1 : step1){
+                for(String s2 : step2){
+                    String[] pairs1 = s1.split(",");
+                    String[] pairs2 = s2.split(",");
+                    if(pairs1[1].equals(pairs2[0])){
+                        String pair = pairs1[0].toString()+","+pairs2[1].toString();
+                        combinations.add(pair);
+                    }
+                }
+            }
+            queryStack.push(combinations);
+            System.out.println("exited slash, stack size: "+queryStack.size());
+        }
+        @Override
+        public void exitBracket(gParser.BracketContext ctx){
+            //pop head list, run bracket op, push back
+            //for brackets, child 1 = inner edge labels, child 3 = operator
+            HashSet<String> inner = queryStack.pop();
+            HashSet<String> out = new HashSet<>();
+            String operator = ctx.getChild(3).getText();
+            switch (operator){
+                case "-":
+                    for(String s : inner){
+                        String swapped = s.split(",")[1]+","+s.split(",")[0];
+                        out.add(swapped);
+                    }
+                    break;
+                case "+":
+                    //TODO: IMPLEMENT CLOSURE ON BRACKETS
+                    break;
+            }
+            queryStack.push(out);
+            System.out.println("exited bracket, stack size: "+queryStack.size());
+        }
+        @Override
+        public void exitOr(gParser.OrContext ctx){
+            //pop two lists, combine, push back
+            HashSet<String> set1 = queryStack.pop();
+            HashSet<String> set2 = queryStack.pop();
+            set1.addAll(set2);
+            queryStack.push(set1);
+            System.out.println("exited or, stack size: "+queryStack.size());
+        }
+        public HashSet<String> edgeQuery (String edge, String operator){
+            HashSet<String> pairs = new HashSet<>();
             Set<Integer> inverts = vertices.keySet();
             for (Integer v : inverts){
                 if(operator.equals("none")){
@@ -149,20 +125,16 @@ public class Query {
                         //for each edge, if the label matches the current label in the path, add its destination to the
                         //next iteration of the search
                         if (e.label.equals(edge)) {
-                            Integer[] p = new Integer[2];
-                            p[0]=v;
-                            p[1]=e.destinationId;
-                            pairs.add(Arrays.asList(p));
+                            String pair = (v.toString()+','+e.destinationId.toString());
+                            pairs.add(pair);
                         }
                     }
                 }else if(operator.equals("-")){
                     for (Integer v2 : vertices.keySet()){
                         for(Edge e : vertices.get(v2).getEdges()){
                             if(e.label.equals(edge)&&e.destinationId.equals(v)){
-                                Integer[] p = new Integer[2];
-                                p[0]=v;
-                                p[1]=v2;
-                                pairs.add(Arrays.asList(p));
+                                String pair = (v.toString()+','+v2.toString());
+                                pairs.add(pair);
                             }
                         }
                     }
@@ -186,18 +158,12 @@ public class Query {
                         l2.clear();
                     }
                     for(Integer i : reachable){
-                        Integer[] p = new Integer[2];
-                        p[0]=v;
-                        p[1]=i;
-                        pairs.add(Arrays.asList(p));
-
+                        String pair = (v.toString()+','+i.toString());
+                        pairs.add(pair);
                     }
-
                 }
-
             }
             return pairs;
         }
     }
-
 }

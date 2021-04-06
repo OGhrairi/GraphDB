@@ -318,29 +318,6 @@ public class gParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class BracketOpContext extends ExpressionContext {
-		public TerminalNode LB() { return getToken(gParser.LB, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode RB() { return getToken(gParser.RB, 0); }
-		public TerminalNode PLUS() { return getToken(gParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(gParser.MINUS, 0); }
-		public BracketOpContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof gListener ) ((gListener)listener).enterBracketOp(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof gListener ) ((gListener)listener).exitBracketOp(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof gVisitor ) return ((gVisitor<? extends T>)visitor).visitBracketOp(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class OrContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -370,6 +347,8 @@ public class gParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode RB() { return getToken(gParser.RB, 0); }
+		public TerminalNode PLUS() { return getToken(gParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(gParser.MINUS, 0); }
 		public BracketContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -410,6 +389,8 @@ public class gParser extends Parser {
 	}
 	public static class AtomContext extends ExpressionContext {
 		public TerminalNode EDGE() { return getToken(gParser.EDGE, 0); }
+		public TerminalNode PLUS() { return getToken(gParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(gParser.MINUS, 0); }
 		public AtomContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -422,25 +403,6 @@ public class gParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof gVisitor ) return ((gVisitor<? extends T>)visitor).visitAtom(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class AtomOpContext extends ExpressionContext {
-		public TerminalNode EDGE() { return getToken(gParser.EDGE, 0); }
-		public TerminalNode PLUS() { return getToken(gParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(gParser.MINUS, 0); }
-		public AtomOpContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof gListener ) ((gListener)listener).enterAtomOp(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof gListener ) ((gListener)listener).exitAtomOp(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof gVisitor ) return ((gVisitor<? extends T>)visitor).visitAtomOp(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -461,10 +423,10 @@ public class gParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
+			setState(48);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case LB:
 				{
 				_localctx = new BracketContext(_localctx);
 				_ctx = _localctx;
@@ -476,20 +438,7 @@ public class gParser extends Parser {
 				expression(0);
 				setState(41);
 				match(RB);
-				}
-				break;
-			case 2:
-				{
-				_localctx = new BracketOpContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(43);
-				match(LB);
-				setState(44);
-				expression(0);
-				setState(45);
-				match(RB);
-				setState(46);
+				setState(42);
 				_la = _input.LA(1);
 				if ( !(_la==PLUS || _la==MINUS) ) {
 				_errHandler.recoverInline(this);
@@ -501,77 +450,78 @@ public class gParser extends Parser {
 				}
 				}
 				break;
-			case 3:
+			case EDGE:
 				{
 				_localctx = new AtomContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(48);
+				setState(44);
 				match(EDGE);
+				setState(46);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
+				case 1:
+					{
+					setState(45);
+					_la = _input.LA(1);
+					if ( !(_la==PLUS || _la==MINUS) ) {
+					_errHandler.recoverInline(this);
+					}
+					else {
+						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+						_errHandler.reportMatch(this);
+						consume();
+					}
+					}
+					break;
+				}
 				}
 				break;
-			case 4:
-				{
-				_localctx = new AtomOpContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(49);
-				match(EDGE);
-				setState(50);
-				_la = _input.LA(1);
-				if ( !(_la==PLUS || _la==MINUS) ) {
-				_errHandler.recoverInline(this);
-				}
-				else {
-					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-					_errHandler.reportMatch(this);
-					consume();
-				}
-				}
-				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(61);
+			setState(58);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(59);
+					setState(56);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 					case 1:
 						{
 						_localctx = new SlashContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(53);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-						setState(54);
+						setState(50);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(51);
 						match(SLASH);
-						setState(55);
-						expression(7);
+						setState(52);
+						expression(5);
 						}
 						break;
 					case 2:
 						{
 						_localctx = new OrContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(56);
+						setState(53);
 						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-						setState(57);
+						setState(54);
 						match(PIPE);
-						setState(58);
+						setState(55);
 						expression(2);
 						}
 						break;
 					}
 					} 
 				}
-				setState(63);
+				setState(60);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			}
 			}
 		}
@@ -596,7 +546,7 @@ public class gParser extends Parser {
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 6);
+			return precpred(_ctx, 4);
 		case 1:
 			return precpred(_ctx, 1);
 		}
@@ -604,24 +554,23 @@ public class gParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\rC\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r@\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\3\2\3\2\3\2\3\2\7\2\17\n\2\f\2\16\2\22\13\2\3\3\3\3"+
 		"\3\3\3\3\7\3\30\n\3\f\3\16\3\33\13\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5"+
-		"\66\n\5\3\5\3\5\3\5\3\5\3\5\3\5\7\5>\n\5\f\5\16\5A\13\5\3\5\2\3\b\6\2"+
-		"\4\6\b\2\3\3\2\3\4\2E\2\n\3\2\2\2\4\23\3\2\2\2\6\37\3\2\2\2\b\65\3\2\2"+
-		"\2\n\13\5\4\3\2\13\20\5\6\4\2\f\r\7\13\2\2\r\17\5\6\4\2\16\f\3\2\2\2\17"+
-		"\22\3\2\2\2\20\16\3\2\2\2\20\21\3\2\2\2\21\3\3\2\2\2\22\20\3\2\2\2\23"+
-		"\24\7\7\2\2\24\31\7\5\2\2\25\26\7\13\2\2\26\30\7\5\2\2\27\25\3\2\2\2\30"+
-		"\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\34\3\2\2\2\33\31\3\2\2\2\34"+
-		"\35\7\b\2\2\35\36\7\n\2\2\36\5\3\2\2\2\37 \7\f\2\2 !\5\b\5\2!\"\7\r\2"+
-		"\2\"#\7\7\2\2#$\7\5\2\2$%\7\13\2\2%&\7\5\2\2&\'\7\b\2\2\'\7\3\2\2\2()"+
-		"\b\5\1\2)*\7\7\2\2*+\5\b\5\2+,\7\b\2\2,\66\3\2\2\2-.\7\7\2\2./\5\b\5\2"+
-		"/\60\7\b\2\2\60\61\t\2\2\2\61\66\3\2\2\2\62\66\7\5\2\2\63\64\7\5\2\2\64"+
-		"\66\t\2\2\2\65(\3\2\2\2\65-\3\2\2\2\65\62\3\2\2\2\65\63\3\2\2\2\66?\3"+
-		"\2\2\2\678\f\b\2\289\7\t\2\29>\5\b\5\t:;\f\3\2\2;<\7\6\2\2<>\5\b\5\4="+
-		"\67\3\2\2\2=:\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@\t\3\2\2\2A?\3\2\2"+
-		"\2\7\20\31\65=?";
+		"\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5\61\n\5\5\5\63\n\5\3"+
+		"\5\3\5\3\5\3\5\3\5\3\5\7\5;\n\5\f\5\16\5>\13\5\3\5\2\3\b\6\2\4\6\b\2\3"+
+		"\3\2\3\4\2A\2\n\3\2\2\2\4\23\3\2\2\2\6\37\3\2\2\2\b\62\3\2\2\2\n\13\5"+
+		"\4\3\2\13\20\5\6\4\2\f\r\7\13\2\2\r\17\5\6\4\2\16\f\3\2\2\2\17\22\3\2"+
+		"\2\2\20\16\3\2\2\2\20\21\3\2\2\2\21\3\3\2\2\2\22\20\3\2\2\2\23\24\7\7"+
+		"\2\2\24\31\7\5\2\2\25\26\7\13\2\2\26\30\7\5\2\2\27\25\3\2\2\2\30\33\3"+
+		"\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\34\3\2\2\2\33\31\3\2\2\2\34\35\7"+
+		"\b\2\2\35\36\7\n\2\2\36\5\3\2\2\2\37 \7\f\2\2 !\5\b\5\2!\"\7\r\2\2\"#"+
+		"\7\7\2\2#$\7\5\2\2$%\7\13\2\2%&\7\5\2\2&\'\7\b\2\2\'\7\3\2\2\2()\b\5\1"+
+		"\2)*\7\7\2\2*+\5\b\5\2+,\7\b\2\2,-\t\2\2\2-\63\3\2\2\2.\60\7\5\2\2/\61"+
+		"\t\2\2\2\60/\3\2\2\2\60\61\3\2\2\2\61\63\3\2\2\2\62(\3\2\2\2\62.\3\2\2"+
+		"\2\63<\3\2\2\2\64\65\f\6\2\2\65\66\7\t\2\2\66;\5\b\5\7\678\f\3\2\289\7"+
+		"\6\2\29;\5\b\5\4:\64\3\2\2\2:\67\3\2\2\2;>\3\2\2\2<:\3\2\2\2<=\3\2\2\2"+
+		"=\t\3\2\2\2><\3\2\2\2\b\20\31\60\62:<";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

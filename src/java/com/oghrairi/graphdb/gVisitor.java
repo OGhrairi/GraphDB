@@ -29,13 +29,6 @@ public interface gVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCexpression(gParser.CexpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code bracketOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracketOp(gParser.BracketOpContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code or}
 	 * labeled alternative in {@link gParser#expression}.
 	 * @param ctx the parse tree
@@ -63,11 +56,4 @@ public interface gVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAtom(gParser.AtomContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code atomOp}
-	 * labeled alternative in {@link gParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAtomOp(gParser.AtomOpContext ctx);
 }

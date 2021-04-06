@@ -52,18 +52,6 @@ public class gBaseListener implements gListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBracketOp(gParser.BracketOpContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBracketOp(gParser.BracketOpContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOr(gParser.OrContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -107,18 +95,6 @@ public class gBaseListener implements gListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAtom(gParser.AtomContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAtomOp(gParser.AtomOpContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAtomOp(gParser.AtomOpContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
