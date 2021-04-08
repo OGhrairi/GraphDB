@@ -1,6 +1,5 @@
 // Generated from C:/Users/Omarg/Desktop/Projects/Projects - year 3/FYP/src/java/com/oghrairi/graphdb\g.g4 by ANTLR 4.9.1
 package com.oghrairi.graphdb;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;

@@ -1,14 +1,11 @@
 package com.oghrairi.graphdb;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-import java.awt.*;
 import java.util.*;
-import java.util.List;
+
 
 public class Query {
     private String queryString;
@@ -39,8 +36,43 @@ public class Query {
     //functions at different classes of nodes
     public class QueryListener extends gBaseListener{
         Stack<HashSet<String>> queryStack;
+        HashSet<String> regOutput;
+        ArrayList<String> conjunctiveVariableArray;
         public QueryListener(){
             queryStack = new Stack<>();
+            regOutput = new HashSet<>();
+            conjunctiveVariableArray = new ArrayList<>();
+        }
+        @Override
+        public void enterCrpq(gParser.CrpqContext ctx){
+            System.out.println("Entering CRPQ");
+        }
+        //exitCrpq is the top level of the query, including all regular queries and bound variables
+        @Override
+        public void exitCrpq(gParser.CrpqContext ctx){
+            System.out.println("Exiting CRPQ");
+            String v = "";
+            v = ctx.getChild(0).getText().split("\\)")[0].substring(1);
+            String[] vars = v.split(",");
+            for(String s : conjunctiveVariableArray){
+                String p1 = s.split("#")[0];
+                for(String pair : p1.split("\\|")){
+                    outputEdges.add(pair);
+                }
+            }
+            /*
+            conjunction Procedure:
+            attach variable labels to each pairs list
+            compare to desired bound variables defined at the start of the query
+            return bound variables that match
+             */
+        }
+        //cexpression is the root of each regular query expression within the overall conjunctive query, including the
+        //regular query plus its bound variables
+        @Override
+        public void enterCexpression(gParser.CexpressionContext ctx){
+            queryStack.clear();
+
         }
         @Override
         public void exitCexpression(gParser.CexpressionContext ctx){
@@ -49,10 +81,19 @@ public class Query {
             int cc = ctx.getChildCount();
             int varCount = (cc-4)/2;
             if(!queryStack.empty()){
-                outputEdges = queryStack.pop();
+                String proto = "";
+                for(String s : queryStack.pop()){
+                    proto+="|"+s;
+                }
+                proto+="#";
+                for(int i=0; i<varCount; i++){
+                    proto+=ctx.getChild(2*(i+1)+2);
+                }
+                conjunctiveVariableArray.add(proto);
             }
-
+            System.out.println("exited expression, stack size: "+queryStack.size());
         }
+        //atoms are the individual edge labels in a query
         @Override
         public void enterAtom(gParser.AtomContext ctx){
             //run atom search, push to stack
@@ -60,13 +101,16 @@ public class Query {
             System.out.println("entered atom, stack size: "+queryStack.size());
             String edge = ctx.getChild(0).getText();
             String operator;
+            //check if atom has an operator (i.e. if the node has >1 child)
             if(ctx.getChildCount()==1){
                 operator="none";
             }else{
                 operator=ctx.getChild(1).getText();
             }
+            //run the edgeQuery function, taking the edge and operator (if one is present) as argument, push output to stack
             queryStack.push(edgeQuery(edge,operator));
         }
+        //slash is the concatenation operator between atoms
         @Override
         public void exitSlash(gParser.SlashContext ctx){
             //pop two lists, run concatenation, push single list
@@ -86,6 +130,7 @@ public class Query {
             queryStack.push(combinations);
             System.out.println("exited slash, stack size: "+queryStack.size());
         }
+        //brackets allows for operators on concatenated paths
         @Override
         public void exitBracket(gParser.BracketContext ctx){
             //pop head list, run bracket op, push back
@@ -101,12 +146,39 @@ public class Query {
                     }
                     break;
                 case "+":
-                    //TODO: IMPLEMENT CLOSURE ON BRACKETS
+                    /*
+                    Procedure:
+                    Iterates through paths inside the bracket, and joins them together in the same way as
+                    the slash operator does
+                    Main difference is that it repeats this some number of times, and the results at each repetition
+                    are added to the output
+                    Currently, the number of repetitions = number of edges on the graph
+                     */
+                    out.addAll(inner);
+                    int edgeCount = graph.getEdgeCount();
+                    for(int i=0; i<edgeCount; i++){
+                        HashSet<String> runner = new HashSet<>();
+                        runner.addAll(inner);
+                        for(String s1 : runner){
+                            for(String s2 : runner){
+                                String[] pairs = new String[4];
+                                pairs[0] = s1.split(",")[0];
+                                pairs[1] = s1.split(",")[1];
+                                pairs[2] = s2.split(",")[0];
+                                pairs[3] = s2.split(",")[1];
+                                if(pairs[1].equals(pairs[2])){
+                                    String newPair = pairs[0]+","+pairs[3];
+                                    out.add(newPair);
+                                }
+                            }
+                        }
+                    }
                     break;
             }
             queryStack.push(out);
             System.out.println("exited bracket, stack size: "+queryStack.size());
         }
+        //the OR pipe is pretty self explanatory; unions together two subquery outputs
         @Override
         public void exitOr(gParser.OrContext ctx){
             //pop two lists, combine, push back
@@ -116,6 +188,8 @@ public class Query {
             queryStack.push(set1);
             System.out.println("exited or, stack size: "+queryStack.size());
         }
+        //Method that runs the individual edge queries and returns a set of vertex pairs that are connected by the edge
+        //includes handling for closure and reverse operators
         public HashSet<String> edgeQuery (String edge, String operator){
             HashSet<String> pairs = new HashSet<>();
             Set<Integer> inverts = vertices.keySet();

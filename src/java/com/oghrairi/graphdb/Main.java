@@ -1,21 +1,13 @@
 package com.oghrairi.graphdb;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
 public class Main {
 
     public static void main(String[] args) {
         //String testString = ("(x1,x2)<-[(knows/likes+)/knows-|(likes/loves)+](x1,x2)");
-        String testString = ("(x1,x2)<-[knows+/likes+](x1,x2)");
+        String testString = ("(x1,x2,x3)<-[likes](x1,x2),[knows](x2,x3)");
         Graph test1 = new Graph("testGraph");
+        test1.addVertex("person");
         test1.addVertex("person");
         test1.addVertex("person");
         test1.addVertex("person");
@@ -27,6 +19,8 @@ public class Main {
         test1.addEdge("likes",3,2);
         test1.addEdge("knows",2,1);
         test1.addEdge("knows",3,2);
+        test1.addEdge("knows",2,4);
+        test1.addEdge("likes",4,0);
         Query query = new Query();
         HashSet<String> str = query.RunQuery(testString,test1);
         if(!(str==null)){
