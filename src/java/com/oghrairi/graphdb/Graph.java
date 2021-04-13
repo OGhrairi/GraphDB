@@ -39,6 +39,9 @@ public class Graph {
     public Map<Integer,Vertex> getVertices(){
         return vertices;
     }
+    public Vertex getVertexById(int id){
+        return vertices.get(id);
+    }
     public Integer getEdgeCount(){
         Integer count = 0;
         for(Integer v : vertices.keySet()){

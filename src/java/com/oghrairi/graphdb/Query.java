@@ -1,7 +1,5 @@
 package com.oghrairi.graphdb;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.util.*;
@@ -15,7 +13,7 @@ public class Query {
     public Query() {
         outputEdges = new HashSet<>();
     }
-    public HashSet<String> RunQuery(String queryString, Graph graph){
+    public HashSet<String> RunQuery(ParseTree parseTree, Graph graph){
         //This is the method that runs the query, outputs a hashset of vertex pairs stored as a string
         this.queryString = queryString;
         this.graph = graph;
@@ -24,11 +22,6 @@ public class Query {
         //convert query string into a charstream, generate a lexer from the lexer class created from my grammar with
         //the charstream as an input, take the tokens from that lexer into a tokenstream, feed that stream into a parser
         //then use a tree walker to step through the generated parse tree
-        CharStream stream = CharStreams.fromString(queryString);
-        gLexer gl = new gLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(gl);
-        gParser parser = new gParser(tokens);
-        ParseTree parseTree = parser.crpq();
         ParseTreeWalker.DEFAULT.walk(new QueryListener(), parseTree);
         return outputEdges;
     }
@@ -37,27 +30,74 @@ public class Query {
     public class QueryListener extends gBaseListener{
         Stack<HashSet<String>> queryStack;
         HashSet<String> regOutput;
-        ArrayList<String> conjunctiveVariableArray;
+        String[] conjunctiveVariableArray;
+        ArrayList<String> outputVariables;
+        HashSet<String> boundVars;
+        int cexpCounter;
         public QueryListener(){
             queryStack = new Stack<>();
             regOutput = new HashSet<>();
-            conjunctiveVariableArray = new ArrayList<>();
+            outputVariables = new ArrayList<>();
+            cexpCounter = 0;
+            boundVars = new HashSet<>();
         }
         @Override
         public void enterCrpq(gParser.CrpqContext ctx){
-            System.out.println("Entering CRPQ");
+            int expCount=0;
+            //get count of number of regular expressions in this query
+            for(int i=0; i<ctx.getChildCount(); i++){
+                if (ctx.getChild(i).getClass().toString().contains("Cexpression")){
+                    expCount+=1;
+                }
+            }
+            conjunctiveVariableArray = new String[expCount];
+        }
+        @Override
+        public void enterVariables(gParser.VariablesContext ctx){
+            //output variables stored at children index 1,3,5 etc
+            for(int i=0; i<ctx.getChildCount()-1; i++){
+                if(i%2!=0){
+                    outputVariables.add(ctx.getChild(i).getText());
+                }
+            }
+        }
+        public void conjunctionMatcher(){
+            Map<String,String> mapper = new HashMap<>();
+            //a,b|c,d|x,y|
+            for(int i=0;i<cexpCounter;i++){
+                String[] pairs = conjunctiveVariableArray[i].split("\\|");
+                int pairCount = pairs.length;
+                String[] bound = conjunctiveVariableArray[pairCount].split(",");
+                for(int j=0;j<pairCount-1;j++){
+
+                }
+            }
+
         }
         //exitCrpq is the top level of the query, including all regular queries and bound variables
         @Override
         public void exitCrpq(gParser.CrpqContext ctx){
-            System.out.println("Exiting CRPQ");
             String v = "";
             v = ctx.getChild(0).getText().split("\\)")[0].substring(1);
             String[] vars = v.split(",");
+            //check that all output variables have been bound
+            boolean varsFound = true;
+            for(String var : outputVariables){
+                if(!boundVars.contains(var)){
+                    varsFound = false;
+                }
+            }
+            if(varsFound){
+                //conjunctionMatcher();
+            }else{
+                System.out.println("VARIABLE(S) NOT BOUND");
+            }
+            //this section is placeholder, to be removed
             for(String s : conjunctiveVariableArray){
-                String p1 = s.split("#")[0];
-                for(String pair : p1.split("\\|")){
-                    outputEdges.add(pair);
+                String[] p1 = s.split("\\|");
+                int l = p1.length;
+                for(int i=0;i<l-1;i++){
+                    outputEdges.add(p1[i]);
                 }
             }
             /*
@@ -65,6 +105,9 @@ public class Query {
             attach variable labels to each pairs list
             compare to desired bound variables defined at the start of the query
             return bound variables that match
+            IDEAS:
+            map values to variables in each rpq
+            once mapped, try combinations for ones that align
              */
         }
         //cexpression is the root of each regular query expression within the overall conjunctive query, including the
@@ -80,25 +123,32 @@ public class Query {
             //pop single pairs list as output
             int cc = ctx.getChildCount();
             int varCount = (cc-4)/2;
+            //builds an output string for each expression, of form |a,b|c,d|#x,y
+            //where a,b and c,d are pairs matching the regular query, and x,y are the bound variables for the regular expression
             if(!queryStack.empty()){
                 String proto = "";
                 for(String s : queryStack.pop()){
-                    proto+="|"+s;
+                    proto+=s+"|";
                 }
-                proto+="#";
                 for(int i=0; i<varCount; i++){
-                    proto+=ctx.getChild(2*(i+1)+2);
+                    String b = ctx.getChild(2*(i+1)+2).getText();
+                    proto+=b;
+                    boundVars.add(b);
+                    if(i<varCount-1){
+                        proto+=",";
+                    }
                 }
-                conjunctiveVariableArray.add(proto);
+                conjunctiveVariableArray[cexpCounter]=proto;
+                cexpCounter+=1;
             }
-            System.out.println("exited expression, stack size: "+queryStack.size());
+
         }
         //atoms are the individual edge labels in a query
         @Override
         public void enterAtom(gParser.AtomContext ctx){
             //run atom search, push to stack
             //for atoms, child 0 = edge, child 1 = operator
-            System.out.println("entered atom, stack size: "+queryStack.size());
+
             String edge = ctx.getChild(0).getText();
             String operator;
             //check if atom has an operator (i.e. if the node has >1 child)

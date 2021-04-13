@@ -1,38 +1,46 @@
 package com.oghrairi.graphdb;
+import java.io.IOException;
 import java.util.HashSet;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-public class Main {
+//extends Application for javafx
+public class Main extends Application{
+    //method which is called from the launch() method in main, builds the fx window
+    public void start(Stage stage){
+        //try/catch necessary for the FXMLLoader
+        try {
+            //get program icon
+            Image icon = new Image("file:resources/chat.png");
+            //get fxml file
+            Parent root = FXMLLoader.load(getClass().getResource("sbtest.fxml"));
+            //build scene from fxml
+            Scene scene = new Scene(root);
+            stage.setTitle("Stage Test");
+            stage.getIcons().add(icon);
+            //set scene on the stage
+            stage.setScene(scene);
+            stage.show();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
-        //String testString = ("(x1,x2)<-[(knows/likes+)/knows-|(likes/loves)+](x1,x2)");
-        String testString = ("(x1,x2,x3)<-[likes](x1,x2),[knows](x2,x3)");
-        Graph test1 = new Graph("testGraph");
-        test1.addVertex("person");
-        test1.addVertex("person");
-        test1.addVertex("person");
-        test1.addVertex("person");
-        test1.addVertex("person");
-        test1.addEdge("knows",0,1);
-        test1.addEdge("likes",1,2);
-        test1.addEdge("knows",2,0);
-        test1.addEdge("knows",0,3);
-        test1.addEdge("likes",3,2);
-        test1.addEdge("knows",2,1);
-        test1.addEdge("knows",3,2);
-        test1.addEdge("knows",2,4);
-        test1.addEdge("likes",4,0);
-        Query query = new Query();
-        HashSet<String> str = query.RunQuery(testString,test1);
-        if(!(str==null)){
-            for(String s : str){
-                System.out.println(s);
-            }
-        }else{
-            System.out.println("No Matches");
-        }
-
-
-
+        launch();
         /*
         Graph test1 = new Graph("testGraph");
         System.out.println(test1.getGraphName());
