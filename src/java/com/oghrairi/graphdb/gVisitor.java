@@ -11,24 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface gVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link gParser#crpq}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCrpq(gParser.CrpqContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link gParser#variables}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariables(gParser.VariablesContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link gParser#cexpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCexpression(gParser.CexpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code or}
 	 * labeled alternative in {@link gParser#expression}.
 	 * @param ctx the parse tree

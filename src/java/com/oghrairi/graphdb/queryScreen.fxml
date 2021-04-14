@@ -41,6 +41,7 @@
    <children>
       <Button id="queryRunButton" layoutX="193.0" layoutY="99.0" mnemonicParsing="false" onAction="#queryRun" text="Button" />
       <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="38.0" layoutY="99.0" />
-      <Text id="queryOutputField" fx:id="queryOutputField" layoutX="391.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Output Area" />
+      <Text id="queryOutputField" fx:id="queryOutputField" layoutX="103.0" layoutY="204.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Output Area" />
+      <Button fx:id="queryToHomeButton" layoutX="12.0" layoutY="361.0" mnemonicParsing="false" onAction="#queryToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0" />
    </children>
 </AnchorPane>

@@ -8,36 +8,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface gListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link gParser#crpq}.
-	 * @param ctx the parse tree
-	 */
-	void enterCrpq(gParser.CrpqContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link gParser#crpq}.
-	 * @param ctx the parse tree
-	 */
-	void exitCrpq(gParser.CrpqContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link gParser#variables}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariables(gParser.VariablesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link gParser#variables}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariables(gParser.VariablesContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link gParser#cexpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterCexpression(gParser.CexpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link gParser#cexpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitCexpression(gParser.CexpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code or}
 	 * labeled alternative in {@link gParser#expression}.
 	 * @param ctx the parse tree

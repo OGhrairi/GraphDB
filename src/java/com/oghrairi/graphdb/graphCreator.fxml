@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+   <children>
+      <Button fx:id="graphToHomeButton" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" onAction="#graphToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
+      <TextField fx:id="graphCreateGraphField" layoutX="56.0" layoutY="62.0" promptText="Enter Graph Name" />
+      <Button fx:id="graphCreateGraphButton" layoutX="205.0" layoutY="62.0" mnemonicParsing="false" onAction="#graphMaker" text=" Create Graph" />
+      <Text fx:id="graphCreatePromptText" layoutX="443.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+      <TextField fx:id="graphCreateVertexField" disable="true" layoutX="56.0" layoutY="117.0" promptText="Enter Label" />
+      <Button fx:id="graphCreateVertexButton" disable="true" layoutX="205.0" layoutY="117.0" mnemonicParsing="false" onAction="#vertexMaker" text="Add Vertex" />
+      <TextField fx:id="graphCreateEdgeOriginField" disable="true" layoutX="56.0" layoutY="175.0" prefHeight="25.0" prefWidth="149.0" promptText="Origin Vertex ID" />
+      <Button fx:id="graphCreateEdgeButton" disable="true" layoutX="209.0" layoutY="188.0" mnemonicParsing="false" onAction="#edgeMaker" text="Add Edge" />
+      <Text fx:id="graphCreateVertexList" layoutX="443.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+      <TextField fx:id="graphCreateEdgeDestField" disable="true" layoutX="56.0" layoutY="200.0" prefHeight="25.0" prefWidth="149.0" promptText="Destination Vertex ID" />
+      <TextField fx:id="graphCreateEdgeLabel" disable="true" layoutX="56.0" layoutY="225.0" prefHeight="25.0" prefWidth="149.0" promptText="Edge Label" />
+      <Text fx:id="graphCreateEdgeList" layoutX="287.0" layoutY="263.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+   </children>
+</AnchorPane>
