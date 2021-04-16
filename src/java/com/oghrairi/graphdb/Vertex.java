@@ -6,12 +6,12 @@ public class Vertex {
     //vertex stores its label, plus a list of outbound edges
     private String label;
     private List<Edge> edges;
-
+    private HashMap<String,String> properties;
     public Vertex(int id, String label) {
         this.label = label;
         edges = new ArrayList<>();
+        properties = new HashMap<>();
     }
-
     public String getLabel() {
         return label;
     }
@@ -22,5 +22,12 @@ public class Vertex {
         Edge e = new Edge(label,toId);
         edges.add(e);
     }
+    public HashMap<String,String> getProperties(){
+        return properties;
+    }
+    public void addProperty(String propertyName, String propertyValue){
+        properties.put(propertyName,propertyValue);
+    }
+
 
 }

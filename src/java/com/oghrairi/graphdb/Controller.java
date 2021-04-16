@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class Controller {
     //Graph object which can be referenced between scenes
     Graph graph;
+    HashMap<String,String> aFilter;
+    HashMap<String,String> bFilter;
     //Each of the links to an fxml object defined in the fxml files
     @FXML
     private Text queryOutputField;
@@ -52,7 +55,23 @@ public class Controller {
     private Text graphCreateEdgeList;
     @FXML
     private TextField graphCreateEdgeLabel;
+    @FXML
+    private Button queryRunButton;
+    @FXML
+    private TextField propertyFilterName;
+    @FXML
+    private TextField propertyFilterValue;
+    @FXML
+    private Button filterAButton;
+    @FXML
+    private Button filterBButton;
+    @FXML
+    private Text filterList;
     //Method to easily provide error handling alert boxes
+    public Controller(){
+        aFilter = new HashMap<>();
+        bFilter = new HashMap<>();
+    }
     public void alertMaker(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(message);
@@ -63,11 +82,14 @@ public class Controller {
         String testString = queryEntryField.getText();
         //current test mode, entering parts of the graph here
         Graph graph = new Graph("Test Graph");
-        graph.addVertex("person0");
-        graph.addVertex("person1");
+        HashMap<String,String> testProperties = new HashMap<>();
+        testProperties.put("property1","value1");
+        graph.addVertex("person0",testProperties);
+        graph.addVertex("person1",testProperties);
         graph.addVertex("person2");
         graph.addVertex("person3");
         graph.addVertex("person4");
+        Map<Integer,Vertex> v = graph.getVertices();
         graph.addEdge("knows",0,1);
         graph.addEdge("likes",1,2);
         graph.addEdge("knows",2,0);
@@ -106,7 +128,14 @@ public class Controller {
                 for(String s : str){
                     int v1 = Integer.parseInt(s.split(",")[0]);
                     int v2 = Integer.parseInt(s.split(",")[1]);
-                    out += graph.getVertexById(v1).getLabel()+"->"+graph.getVertexById(v2).getLabel()+"\n";
+                    Vertex vertexA = graph.getVertexById(v1);
+                    Vertex vertexB = graph.getVertexById(v2);
+                    boolean fits = true;
+                    fits = isFits(vertexA, fits, aFilter);
+                    fits = isFits(vertexB, fits, bFilter);
+                    if(fits){
+                        out += graph.getVertexById(v1).getLabel()+"->"+graph.getVertexById(v2).getLabel()+"\n";
+                    }
                 }
             }else{
                 out = "No Matches";
@@ -119,6 +148,20 @@ public class Controller {
             queryOutputField.setText(p.getMessage());
         }
     }
+
+    private boolean isFits(Vertex vertexA, boolean fits, HashMap<String, String> filter) {
+        if(!filter.isEmpty()){
+            for(String property : filter.keySet()){
+                if(!vertexA.getProperties().containsKey(property)){
+                    fits = false;
+                }else if(!vertexA.getProperties().get(property).equals(filter.get(property))){
+                    fits = false;
+                }
+            }
+        }
+        return fits;
+    }
+
     //Creates a new graph with a given graph name
     public void graphMaker(ActionEvent e){
         if(!graphCreateGraphField.getText().isEmpty()) {
@@ -193,9 +236,37 @@ public class Controller {
         graphCreateEdgeDestField.clear();
         graphCreateEdgeLabel.clear();
     }
-
+    //Adds property filters to a query output
+    public void addAFilter(ActionEvent e){
+        if(!propertyFilterName.getText().isEmpty()&&!propertyFilterValue.getText().isEmpty()){
+            aFilter.put(propertyFilterName.getText(),propertyFilterValue.getText());
+            filterListPopulate();
+        }else{
+            alertMaker("Please enter property name and value to add a filter");
+        }
+    }
+    public void filterListPopulate(){
+        String list = "";
+        for(String name : aFilter.keySet()){
+            list += "\nA   "+name+"   "+aFilter.get(name);
+        }
+        for(String name : bFilter.keySet()){
+            list += "\nB   "+name+"   "+bFilter.get(name);
+        }
+        filterList.setText(list);
+    }
+    public void addBFilter(ActionEvent e){
+        if(!propertyFilterName.getText().isEmpty()&&!propertyFilterValue.getText().isEmpty()){
+            bFilter.put(propertyFilterName.getText(),propertyFilterValue.getText());
+            filterListPopulate();
+        }else{
+            alertMaker("Please enter property name and value to add a filter");
+        }
+    }
     //these methods are called when navigating between scenes
     public void homeToQuery(ActionEvent e){
+        aFilter.clear();
+        bFilter.clear();
         try {
             Parent root = FXMLLoader.load(getClass().getResource("queryScreen.fxml"));
             homeToQueryButton.getScene().setRoot(root);
