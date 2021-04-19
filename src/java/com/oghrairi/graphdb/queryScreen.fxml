@@ -37,7 +37,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+<AnchorPane fx:id="queryScreenAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
    <children>
       <Button id="queryRunButton" fx:id="queryRunButton" layoutX="242.0" layoutY="175.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
       <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="38.0" layoutY="99.0" promptText="Enter Path Query" />
@@ -48,5 +48,6 @@
       <Button fx:id="filterAButton" layoutX="356.0" layoutY="131.0" mnemonicParsing="false" onAction="#addAFilter" text="Filter A" />
       <Button fx:id="filterBButton" layoutX="421.0" layoutY="131.0" mnemonicParsing="false" onAction="#addBFilter" text="Filter B" />
       <Text id="queryOutputField" fx:id="filterList" layoutX="70.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+      <Button fx:id="graphQueryLoadButton" layoutX="253.0" layoutY="42.0" mnemonicParsing="false" onAction="#loadGraph" text="Load File" />
    </children>
 </AnchorPane>

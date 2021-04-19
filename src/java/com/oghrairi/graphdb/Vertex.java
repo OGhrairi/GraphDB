@@ -7,7 +7,7 @@ public class Vertex {
     private String label;
     private List<Edge> edges;
     private HashMap<String,String> properties;
-    public Vertex(int id, String label) {
+    public Vertex(String label) {
         this.label = label;
         edges = new ArrayList<>();
         properties = new HashMap<>();

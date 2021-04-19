@@ -6,21 +6,25 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+
+import java.io.*;
+import java.util.*;
 
 public class Controller {
     //Graph object which can be referenced between scenes
     Graph graph;
     HashMap<String,String> aFilter;
     HashMap<String,String> bFilter;
+    Vertex newVertex;
     //Each of the links to an fxml object defined in the fxml files
+    @FXML
+    private AnchorPane queryScreenAnchor;
     @FXML
     private Text queryOutputField;
     @FXML
@@ -56,17 +60,21 @@ public class Controller {
     @FXML
     private TextField graphCreateEdgeLabel;
     @FXML
-    private Button queryRunButton;
-    @FXML
     private TextField propertyFilterName;
     @FXML
     private TextField propertyFilterValue;
     @FXML
-    private Button filterAButton;
-    @FXML
-    private Button filterBButton;
-    @FXML
     private Text filterList;
+    @FXML
+    private TextField graphCreateVertexPropertyNameField;
+    @FXML
+    private TextField graphCreateVertexPropertyValueField;
+    @FXML
+    private Button graphCreateVertexLabelButton;
+    @FXML
+    private Button graphCreateVertexPropertyButton;
+    @FXML
+    private Button graphCreateSaveButton;
     //Method to easily provide error handling alert boxes
     public Controller(){
         aFilter = new HashMap<>();
@@ -81,24 +89,24 @@ public class Controller {
     public void queryRun(ActionEvent e){
         String testString = queryEntryField.getText();
         //current test mode, entering parts of the graph here
-        Graph graph = new Graph("Test Graph");
-        HashMap<String,String> testProperties = new HashMap<>();
-        testProperties.put("property1","value1");
-        graph.addVertex("person0",testProperties);
-        graph.addVertex("person1",testProperties);
-        graph.addVertex("person2");
-        graph.addVertex("person3");
-        graph.addVertex("person4");
-        Map<Integer,Vertex> v = graph.getVertices();
-        graph.addEdge("knows",0,1);
-        graph.addEdge("likes",1,2);
-        graph.addEdge("knows",2,0);
-        graph.addEdge("knows",0,3);
-        graph.addEdge("likes",3,2);
-        graph.addEdge("knows",2,1);
-        graph.addEdge("knows",3,2);
-        graph.addEdge("knows",2,4);
-        graph.addEdge("likes",4,0);
+//        Graph graph = new Graph("Test Graph");
+//        HashMap<String,String> testProperties = new HashMap<>();
+//        testProperties.put("property1","value1");
+//        graph.addVertex("person0",testProperties);
+//        graph.addVertex("person1",testProperties);
+//        graph.addVertex("person2");
+//        graph.addVertex("person3");
+//        graph.addVertex("person4");
+//        Map<Integer,Vertex> v = graph.getVertices();
+//        graph.addEdge("knows",0,1);
+//        graph.addEdge("likes",1,2);
+//        graph.addEdge("knows",2,0);
+//        graph.addEdge("knows",0,3);
+//        graph.addEdge("likes",3,2);
+//        graph.addEdge("knows",2,1);
+//        graph.addEdge("knows",3,2);
+//        graph.addEdge("knows",2,4);
+//        graph.addEdge("likes",4,0);
         //instantiate a new query
         Query query = new Query();
         //begin query processing pipeline
@@ -148,7 +156,6 @@ public class Controller {
             queryOutputField.setText(p.getMessage());
         }
     }
-
     private boolean isFits(Vertex vertexA, boolean fits, HashMap<String, String> filter) {
         if(!filter.isEmpty()){
             for(String property : filter.keySet()){
@@ -161,7 +168,6 @@ public class Controller {
         }
         return fits;
     }
-
     //Creates a new graph with a given graph name
     public void graphMaker(ActionEvent e){
         if(!graphCreateGraphField.getText().isEmpty()) {
@@ -171,6 +177,11 @@ public class Controller {
             graphCreateGraphButton.setDisable(true);
             graphCreateVertexButton.setDisable(false);
             graphCreateVertexField.setDisable(false);
+            graphCreateVertexPropertyNameField.setDisable(false);
+            graphCreateVertexPropertyValueField.setDisable(false);
+            graphCreateVertexLabelButton.setDisable(false);
+            graphCreateVertexPropertyButton.setDisable(false);
+            graphCreateSaveButton.setDisable(false);
         }else{
             alertMaker("Please enter graph name");
         }
@@ -180,22 +191,44 @@ public class Controller {
     public void vertexMaker(ActionEvent e){
         String vName = graphCreateVertexField.getText();
         if(!vName.isEmpty()){
-            graph.addVertex(vName);
+            newVertex = new Vertex(vName);
         }else{
             alertMaker("Please enter vertex label");
         }
-        Map<Integer,Vertex> vList = graph.getVertices();
-        String vertices = "";
-        for(Integer key : vList.keySet()){
-            vertices += "ID: "+key+", Label: "+vList.get(key).getLabel()+"\n";
-        }
-        graphCreateVertexList.setText(vertices);
+
         graphCreateVertexField.clear();
         graphCreateEdgeButton.setDisable(false);
         graphCreateEdgeOriginField.setDisable(false);
         graphCreateEdgeDestField.setDisable(false);
         graphCreateEdgeLabel.setDisable(false);
-
+        graphCreateVertexButton.setDisable(false);
+        graphCreateVertexPropertyNameField.setDisable(false);
+        graphCreateVertexPropertyValueField.setDisable(false);
+        graphCreateVertexPropertyButton.setDisable(false);
+    }
+    public void addProperty(ActionEvent e){
+        if(graphCreateVertexPropertyNameField.getText().isEmpty()|graphCreateVertexPropertyValueField.getText().isEmpty()){
+            alertMaker("Enter property name and value");
+        }else{
+            newVertex.addProperty(graphCreateVertexPropertyNameField.getText(),graphCreateVertexPropertyValueField.getText());
+            System.out.println(newVertex.getProperties().size());
+            graphCreateVertexPropertyNameField.clear();
+            graphCreateVertexPropertyValueField.clear();
+        }
+    }
+    public void saveVertex(ActionEvent e){
+        graph.addVertex(newVertex);
+        String vertices = "";
+        Map<Integer,Vertex> vList = graph.getVertices();
+        for(Integer key : vList.keySet()){
+            vertices += "ID: "+key+", Label: "+vList.get(key).getLabel()+"\n";
+        }
+        graphCreateVertexList.setText(vertices);
+        graphCreateVertexField.clear();
+        graphCreateVertexButton.setDisable(true);
+        graphCreateVertexPropertyNameField.setDisable(true);
+        graphCreateVertexPropertyValueField.setDisable(true);
+        graphCreateVertexPropertyButton.setDisable(true);
     }
     //creates a new edge in a currently loaded graph, given origin and destination vertex ids plus edge label
     public void edgeMaker(ActionEvent e){
@@ -261,6 +294,113 @@ public class Controller {
             filterListPopulate();
         }else{
             alertMaker("Please enter property name and value to add a filter");
+        }
+    }
+    public void saveGraph(ActionEvent e){
+        if(Objects.isNull(graph)){
+            alertMaker("Please create a graph before saving");
+        }else{
+            /*
+            Need to store: graph name, vertices - (vertex id, vertex label, vertex properties, edges from vertex, edge labels)
+            split into: graphName|vertexId#vertexLabel#prop1Name/prop1Value,prop2Name/prop2Value#edge1Label/edge1Destinationid,edge2Label/edge2Destinationid|NEXTVERTEX
+            reserved characters for graph name, vertex and edge fields : | , # /
+             */
+            String graphName = "C:\\Users\\Omarg\\Desktop\\"+graph.getGraphName()+".txt";
+            Map<Integer,Vertex> vertices = graph.getVertices();
+            System.out.println(graph.getEdgeCount());
+            String graphString = "";
+            boolean isFirstVert = true;
+            for(Integer id : vertices.keySet()){
+                Vertex vertex = vertices.get(id);
+                String vString = "";
+                if(isFirstVert){
+                    isFirstVert=false;
+                }else{
+                    vString+="|";
+                }
+                vString += Integer.toString(id)+"#";
+                vString += vertex.getLabel()+"#";
+                boolean isFirstProp=true;
+                for(String name : vertex.getProperties().keySet()){
+                    if(isFirstProp){
+                        isFirstProp=false;
+                    }else{
+                        vString+=",";
+                    }
+                    vString += name+"/"+vertex.getProperties().get(name);
+                }
+                vString += "#";
+                for(Edge edge : vertex.getEdges()){
+                    vString += edge.label+"/"+Integer.toString(edge.destinationId);
+                }
+                graphString+= vString;
+            }
+            System.out.println(graphString);
+            try{
+                File file = new File(graphName);
+                FileWriter writer = new FileWriter(file);
+                writer.write(graphString);
+                writer.close();
+                if(file.createNewFile()){
+                    System.out.println("file created");
+                }else{
+                    System.out.println("File already exists.");
+                }
+
+            }catch (IOException x){
+                System.out.println("IOException in file creation");
+                x.printStackTrace();
+            }
+
+        }
+
+
+    }
+    public void loadGraph(ActionEvent e){
+        //split into: vertexId#vertexLabel#prop1Name/prop1Value,prop2Name/prop2Value#edge1Label/edge1Destinationid,edge2Label/edge2Destinationid|NEXTVERTEX
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load graph txt file");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("txt files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(filter);
+        File file = fileChooser.showOpenDialog(queryScreenAnchor.getScene().getWindow());
+        String graphName = file.getName().split(".txt")[0];
+        graph = new Graph(graphName);
+        try{
+            Scanner reader = new Scanner(file);
+            String graphString = reader.nextLine();
+            //Highest level of text file, each vertex representation is split by a '|'
+            String[] vertexStringArray = graphString.split("\\|");
+            for(String vertexString : vertexStringArray){
+                //Within each vertex representation, each field is split by a '#'
+                String[] vertexParts = vertexString.split("#");
+                for(String v : vertexParts){
+                    System.out.println(v);
+                }
+                int vertexId = Integer.parseInt(vertexParts[0]);
+                String vertexLabel = vertexParts[1];
+                Vertex vertex = new Vertex(vertexLabel);
+                //The third field is a list of properties, delimited by a ','
+                String[] propertyArray = vertexParts[2].split(",");
+                for(String s : propertyArray){
+                    //for each property, name and value are delimited by '/'
+                    String name = s.split("/")[0];
+                    String val = s.split("/")[1];
+                    vertex.addProperty(name,val);
+                }
+                //the fourth and final field is a list of edges, delimited by a ','
+                String[] edgeArray = vertexParts[3].split(",");
+                for(String s : edgeArray){
+                    //for each edge, label and destination id are delimited by a '/'
+                    String label = s.split("/")[0];
+                    int destination = Integer.parseInt(s.split("/")[1]);
+                    vertex.addEdge(label,destination);
+                }
+                graph.addVertex(vertex,vertexId);
+            }
+        }
+        catch (IOException x){
+            System.out.println("File Not found");
+            x.printStackTrace();
         }
     }
     //these methods are called when navigating between scenes
