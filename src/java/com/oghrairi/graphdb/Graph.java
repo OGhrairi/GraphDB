@@ -40,6 +40,9 @@ public class Graph {
         vertices.put(id,v);
         vertexIdCounter+=1;
     }
+    public void deleteVertex(Integer id){
+        vertices.remove(id);
+    }
 //edges are stored in the source vertex object
     public void addEdge(String label, int fromId, int toId){
         //check that vertex keys exist

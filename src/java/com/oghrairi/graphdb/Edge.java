@@ -8,4 +8,12 @@ public class Edge{
         this.label = label;
         this.destinationId = destinationId;
     }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setDestinationId(Integer destinationId) {
+        this.destinationId = destinationId;
+    }
 }

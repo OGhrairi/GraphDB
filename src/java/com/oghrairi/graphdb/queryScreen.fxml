@@ -37,7 +37,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="queryScreenAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+<AnchorPane fx:id="queryScreenAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
    <children>
       <Button id="queryRunButton" fx:id="queryRunButton" layoutX="242.0" layoutY="175.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
       <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="38.0" layoutY="99.0" promptText="Enter Path Query" />

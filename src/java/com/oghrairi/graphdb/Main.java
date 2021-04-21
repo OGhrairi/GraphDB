@@ -20,7 +20,8 @@ public class Main extends Application{
     public void start(Stage stage){
         //try/catch necessary for the FXMLLoader
         try {
-            Parent homeRoot = FXMLLoader.load(getClass().getResource("home.fxml"));
+            FXMLLoader loader = new FXMLLoader();
+            Parent homeRoot = loader.load(getClass().getResource("home.fxml"));
             Scene homeScreen = new Scene(homeRoot);
             stage.setScene(homeScreen);
         }

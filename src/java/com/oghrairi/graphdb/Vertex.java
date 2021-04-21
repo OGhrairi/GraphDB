@@ -28,6 +28,11 @@ public class Vertex {
     public void addProperty(String propertyName, String propertyValue){
         properties.put(propertyName,propertyValue);
     }
-
+    public void changePropertyValue(String propertyKey, String newValue){
+        properties.replace(propertyKey,newValue);
+    }
+    public void changeLabel(String newLabel){
+        label = newLabel;
+    }
 
 }

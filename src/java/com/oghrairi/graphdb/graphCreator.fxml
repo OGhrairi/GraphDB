@@ -5,24 +5,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
    <children>
       <Button fx:id="graphToHomeButton" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" onAction="#graphToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
       <TextField fx:id="graphCreateGraphField" layoutX="56.0" layoutY="62.0" promptText="Enter Graph Name" />
       <Button fx:id="graphCreateGraphButton" layoutX="205.0" layoutY="62.0" mnemonicParsing="false" onAction="#graphMaker" text=" Create Graph" />
-      <Text fx:id="graphCreatePromptText" layoutX="443.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
-      <TextField fx:id="graphCreateVertexField" disable="true" layoutX="56.0" layoutY="117.0" promptText="Enter Label" />
-      <Button fx:id="graphCreateVertexButton" disable="true" layoutX="206.0" layoutY="167.0" mnemonicParsing="false" onAction="#saveVertex" text="Add Vertex" />
-      <TextField fx:id="graphCreateEdgeOriginField" disable="true" layoutX="56.0" layoutY="230.0" prefHeight="25.0" prefWidth="149.0" promptText="Origin Vertex ID" />
-      <Button fx:id="graphCreateEdgeButton" disable="true" layoutX="209.0" layoutY="243.0" mnemonicParsing="false" onAction="#edgeMaker" text="Add Edge" />
-      <Text fx:id="graphCreateVertexList" layoutX="442.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
-      <TextField fx:id="graphCreateEdgeDestField" disable="true" layoutX="56.0" layoutY="255.0" prefHeight="25.0" prefWidth="149.0" promptText="Destination Vertex ID" />
-      <TextField fx:id="graphCreateEdgeLabel" disable="true" layoutX="56.0" layoutY="280.0" prefHeight="25.0" prefWidth="149.0" promptText="Edge Label" />
-      <Text fx:id="graphCreateEdgeList" layoutX="442.0" layoutY="293.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
-      <Button fx:id="graphCreateSaveButton" disable="true" layoutX="286.0" layoutY="365.0" mnemonicParsing="false" onAction="#saveGraph" text="Save" />
-      <TextField fx:id="graphCreateVertexPropertyNameField" disable="true" layoutX="56.0" layoutY="142.0" promptText="Enter Property Name" />
-      <TextField fx:id="graphCreateVertexPropertyValueField" disable="true" layoutX="207.0" layoutY="142.0" promptText="Enter Property Value" />
-      <Button fx:id="graphCreateVertexPropertyButton" disable="true" layoutX="356.0" layoutY="142.0" mnemonicParsing="false" onAction="#addProperty" text="Add Property" />
-      <Button fx:id="graphCreateVertexLabelButton" disable="true" layoutX="209.0" layoutY="117.0" mnemonicParsing="false" onAction="#vertexMaker" text="Create Label" />
+      <Text fx:id="graphCreatePromptText" layoutX="695.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+      <TextField fx:id="graphCreateVertexField" disable="true" layoutX="57.0" layoutY="203.0" promptText="Enter Label" />
+      <Button fx:id="graphCreateVertexButton" disable="true" layoutX="207.0" layoutY="253.0" mnemonicParsing="false" onAction="#saveVertex" text="Add Vertex" />
+      <TextField fx:id="graphCreateEdgeOriginField" disable="true" layoutX="58.0" layoutY="362.0" prefHeight="25.0" prefWidth="149.0" promptText="Origin Vertex ID" />
+      <Button fx:id="graphCreateEdgeButton" disable="true" layoutX="211.0" layoutY="375.0" mnemonicParsing="false" onAction="#edgeMaker" text="Add Edge" />
+      <Text fx:id="graphCreateVertexList" layoutX="695.0" layoutY="199.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+      <TextField fx:id="graphCreateEdgeDestField" disable="true" layoutX="58.0" layoutY="387.0" prefHeight="25.0" prefWidth="149.0" promptText="Destination Vertex ID" />
+      <TextField fx:id="graphCreateEdgeLabel" disable="true" layoutX="58.0" layoutY="412.0" prefHeight="25.0" prefWidth="149.0" promptText="Edge Label" />
+      <Text fx:id="graphCreateEdgeList" layoutX="695.0" layoutY="404.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TEST" />
+      <Button fx:id="graphCreateSaveButton" disable="true" layoutX="168.0" layoutY="565.0" mnemonicParsing="false" onAction="#saveGraph" text="Save" />
+      <TextField fx:id="graphCreateVertexPropertyNameField" disable="true" layoutX="57.0" layoutY="228.0" promptText="Enter Property Name" />
+      <TextField fx:id="graphCreateVertexPropertyValueField" disable="true" layoutX="208.0" layoutY="228.0" promptText="Enter Property Value" />
+      <Button fx:id="graphCreateVertexPropertyButton" disable="true" layoutX="357.0" layoutY="228.0" mnemonicParsing="false" onAction="#addProperty" text="Add Property" />
+      <Button fx:id="graphCreateVertexLabelButton" disable="true" layoutX="210.0" layoutY="203.0" mnemonicParsing="false" onAction="#vertexMaker" text="Create Label" />
    </children>
 </AnchorPane>
