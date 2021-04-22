@@ -33,21 +33,51 @@
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="queryScreenAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+<AnchorPane fx:id="currentAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.QueryController">
    <children>
-      <Button id="queryRunButton" fx:id="queryRunButton" layoutX="242.0" layoutY="175.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
-      <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="38.0" layoutY="99.0" promptText="Enter Path Query" />
-      <Text id="queryOutputField" fx:id="queryOutputField" layoutX="415.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Output Area" />
-      <Button fx:id="queryToHomeButton" layoutX="12.0" layoutY="361.0" mnemonicParsing="false" onAction="#queryToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0" />
-      <TextField fx:id="propertyFilterName" layoutX="38.0" layoutY="131.0" promptText="Enter Property Name" />
-      <TextField fx:id="propertyFilterValue" layoutX="193.0" layoutY="131.0" promptText="Enter Property Value" />
-      <Button fx:id="filterAButton" layoutX="356.0" layoutY="131.0" mnemonicParsing="false" onAction="#addAFilter" text="Filter A" />
-      <Button fx:id="filterBButton" layoutX="421.0" layoutY="131.0" mnemonicParsing="false" onAction="#addBFilter" text="Filter B" />
-      <Text id="queryOutputField" fx:id="filterList" layoutX="70.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-      <Button fx:id="graphQueryLoadButton" layoutX="253.0" layoutY="42.0" mnemonicParsing="false" onAction="#loadGraph" text="Load File" />
+      <Button id="queryRunButton" fx:id="queryRunButton" layoutX="86.0" layoutY="243.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
+      <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="48.0" layoutY="215.0" promptText="Enter Path Query" />
+      <Button fx:id="queryToHomeButton" layoutX="12.0" layoutY="361.0" mnemonicParsing="false" onAction="#queryToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <TextField fx:id="propertyFilterName" layoutX="303.0" layoutY="115.0" promptText="Enter Property Name" />
+      <TextField fx:id="propertyFilterValue" layoutX="303.0" layoutY="140.0" promptText="Enter Property Value" />
+      <Button fx:id="filterAButton" layoutX="308.0" layoutY="165.0" mnemonicParsing="false" onAction="#addAFilter" text="Apply to origin vertices" />
+      <Button fx:id="filterBButton" layoutX="294.0" layoutY="190.0" mnemonicParsing="false" onAction="#addBFilter" text="Apply to destination vertices" />
+      <Button fx:id="graphQueryLoadButton" layoutX="18.0" layoutY="32.0" mnemonicParsing="false" onAction="#loadGraph" text="Load File">
+         <font>
+            <Font size="15.0" />
+         </font></Button>
+      <ListView fx:id="listOutput" layoutX="539.0" layoutY="54.0" prefHeight="532.0" prefWidth="447.0" />
+      <Button fx:id="clearFIlterButton" layoutX="334.0" layoutY="441.0" mnemonicParsing="false" onAction="#clearFilters" text="Clear Filters" />
+      <ListView fx:id="filterList" layoutX="273.0" layoutY="241.0" prefHeight="200.0" prefWidth="200.0" />
+      <Text layoutX="293.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filter Vertices By Property">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="53.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Regular Graph Query">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="353.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filters">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="699.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Query Output Pairs">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="489.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" />
    </children>
 </AnchorPane>

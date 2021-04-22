@@ -39,7 +39,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.Controller">
+<StackPane fx:id="currentAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.HomeController">
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to GraphDB" StackPane.alignment="TOP_CENTER">
          <font>
@@ -51,8 +51,7 @@
             <Insets />
          </StackPane.margin>
          <children>
-            <Button fx:id="homeToGraphButton" mnemonicParsing="false" onAction="#homeToGraph" text="Create Graph" />
-            <Button fx:id="homeToEditButton" mnemonicParsing="false" onAction="#homeToEdit" text="Edit Graph" />
+            <Button fx:id="homeToEditButton" mnemonicParsing="false" onAction="#homeToEdit" text="Manage Graphs" />
             <Button fx:id="homeToQueryButton" mnemonicParsing="false" onAction="#homeToQuery" text="Query Graph" />
          </children>
       </HBox>
