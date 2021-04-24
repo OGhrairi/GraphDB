@@ -8,9 +8,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.*;
 public class EditController {
     Graph graph;
     Integer selectedVertex;
+    String graphPath;
     //Each of the links to an fxml object defined in the fxml files
     @FXML
     private AnchorPane currentAnchor;
@@ -55,6 +58,14 @@ public class EditController {
     @FXML
     private TextField changeVertexLabelField;
 
+    //Because of how files are saved, all input strings need to be cleansed of / , | #
+    public String inputCleaner(String input){
+        String output = input.replace("/","");
+        output = output.replace(",","");
+        output = output.replace("|","");
+        output = output.replace("#","");
+        return output;
+    }
     //Method called to easily create alert dialogues, takes an alert message as argument
     public void alertMaker(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -68,7 +79,9 @@ public class EditController {
         Optional<String> label = td.showAndWait();
         if(label.isPresent()){
             if(!label.get().isEmpty()){
-                graph = new Graph(label.get());
+                graph = new Graph(inputCleaner(label.get()));
+                graphPath = System.getProperty("user.dir");
+                System.out.println(graphPath);
                 graphEditVertexList.setDisable(false);
                 graphEditAddVertexButton.setDisable(false);
                 graphEditLoadVertexButton.setDisable(false);
@@ -100,7 +113,7 @@ public class EditController {
             Optional<String> label = td.showAndWait();
             if(label.isPresent()){
                 if(!label.get().isEmpty()){
-                    graph.getVertexById(selectedVertex).changeLabel(label.get());
+                    graph.getVertexById(selectedVertex).changeLabel(inputCleaner(label.get()));
                     vertexListUpdater();
                 }else{
                     alertMaker("Enter a vertex label");
@@ -132,7 +145,7 @@ public class EditController {
         String lab;
         if(label.isPresent()) {
             if (!label.get().isEmpty()) {
-                lab = label.get();
+                lab = inputCleaner(label.get());
                 td = new TextInputDialog();
                 td.setHeaderText("Enter Destination Vertex ID");
                 Optional<String> id = td.showAndWait();
@@ -180,7 +193,7 @@ public class EditController {
                     Optional<String> newLabel = tx.showAndWait();
                     if(newLabel.isPresent()){
                         if(!newLabel.get().isEmpty()){
-                            edge.setLabel(newLabel.get());
+                            edge.setLabel(inputCleaner(newLabel.get()));
                             tx = new TextInputDialog(destId.toString());
                             tx.setHeaderText("Edit Destination ID");
                             Optional<String> newDest = tx.showAndWait();
@@ -234,14 +247,14 @@ public class EditController {
         Optional<String> label = td.showAndWait();
         if(label.isPresent()){
             if(!label.get().isEmpty()){
-                String name = label.get();
+                String name = inputCleaner(label.get());
                 if(!graph.getVertexById(selectedVertex).getProperties().containsKey(name)){
                     td = new TextInputDialog();
                     td.setHeaderText("Enter Property Value");
                     Optional<String> value = td.showAndWait();
                     if(value.isPresent()){
                         if(!value.get().isEmpty()){
-                            graph.getVertexById(selectedVertex).addProperty(name,value.get());
+                            graph.getVertexById(selectedVertex).addProperty(name,inputCleaner(value.get()));
                             propertyListUpdater();
                             vertexListUpdater();
                         }else{
@@ -272,7 +285,7 @@ public class EditController {
             Optional<String> label = td.showAndWait();
             if(label.isPresent()){
                 if(!label.get().isEmpty()){
-                    String newValue = label.get();
+                    String newValue = inputCleaner(label.get());
                     graph.getVertexById(selectedVertex).changePropertyValue(key,newValue);
                     propertyListUpdater();
                 }else{
@@ -305,7 +318,11 @@ public class EditController {
             split into: graphName|vertexId#vertexLabel#prop1Name/prop1Value,prop2Name/prop2Value#edge1Label/edge1Destinationid,edge2Label/edge2Destinationid|NEXTVERTEX
             reserved characters for graph name, vertex and edge fields : | , # /
              */
-            String graphName = "C:\\Users\\Omarg\\Desktop\\"+graph.getGraphName()+".txt";
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choose save location");
+            File selectedDir = directoryChooser.showDialog(currentAnchor.getScene().getWindow());
+            System.out.println(selectedDir.getAbsolutePath());
+            String graphName = selectedDir.getAbsolutePath()+"\\"+graph.getGraphName()+".txt";
             Map<Integer,Vertex> vertices = graph.getVertices();
             System.out.println(graph.getEdgeCount());
             String graphString = "";
@@ -372,47 +389,55 @@ public class EditController {
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("txt files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(filter);
         File file = fileChooser.showOpenDialog(currentAnchor.getScene().getWindow());
+        graphPath = file.getParent();
+        System.out.println(graphPath);
         Boolean isLoaded = false;
         if (!(file == null)) {
             String graphName = file.getName().split(".txt")[0];
             graph = new Graph(graphName);
             try {
                 Scanner reader = new Scanner(file);
-                String graphString = reader.nextLine();
-                //Highest level of text file, each vertex representation is split by a '|'
-                String[] vertexStringArray = graphString.split("\\|");
-                for (String vertexString : vertexStringArray) {
-                    //Within each vertex representation, each field is split by a '#'
-                    String[] vertexParts = vertexString.split("#");
-                    int vertexId = Integer.parseInt(vertexParts[0]);
-                    String vertexLabel = vertexParts[1];
-                    Vertex vertex = new Vertex(vertexLabel);
-                    //The third field is a list of properties, delimited by a ','
-                    try {
-                        String[] propertyArray = vertexParts[2].split(",");
-                        for (String s : propertyArray) {
-                            //for each property, name and value are delimited by '/'
-                            String name = s.split("/")[0];
-                            String val = s.split("/")[1];
-                            vertex.addProperty(name, val);
-                        }
-                    } catch (ArrayIndexOutOfBoundsException x) {
 
-                    }
-                    //the fourth and final field is a list of edges, delimited by a ','
-                    try {
-                        String[] edgeArray = vertexParts[3].split(",");
-                        for (String s : edgeArray) {
-                            //for each edge, label and destination id are delimited by a '/'
-                            String label = s.split("/")[0];
-                            int destination = Integer.parseInt(s.split("/")[1]);
-                            vertex.addEdge(label, destination);
-                        }
-                    } catch (ArrayIndexOutOfBoundsException x) {
+                if(!reader.hasNext()){
+                    alertMaker("Loaded empty graph");
+                }else{
+                    String graphString = reader.nextLine();
+                    //Highest level of text file, each vertex representation is split by a '|'
+                    String[] vertexStringArray = graphString.split("\\|");
+                    for (String vertexString : vertexStringArray) {
+                        //Within each vertex representation, each field is split by a '#'
+                        String[] vertexParts = vertexString.split("#");
+                        int vertexId = Integer.parseInt(vertexParts[0]);
+                        String vertexLabel = vertexParts[1];
+                        Vertex vertex = new Vertex(vertexLabel);
+                        //The third field is a list of properties, delimited by a ','
+                        try {
+                            String[] propertyArray = vertexParts[2].split(",");
+                            for (String s : propertyArray) {
+                                //for each property, name and value are delimited by '/'
+                                String name = s.split("/")[0];
+                                String val = s.split("/")[1];
+                                vertex.addProperty(name, val);
+                            }
+                        } catch (ArrayIndexOutOfBoundsException x) {
 
+                        }
+                        //the fourth and final field is a list of edges, delimited by a ','
+                        try {
+                            String[] edgeArray = vertexParts[3].split(",");
+                            for (String s : edgeArray) {
+                                //for each edge, label and destination id are delimited by a '/'
+                                String label = s.split("/")[0];
+                                int destination = Integer.parseInt(s.split("/")[1]);
+                                vertex.addEdge(label, destination);
+                            }
+                        } catch (ArrayIndexOutOfBoundsException x) {
+
+                        }
+                        graph.addVertex(vertex, vertexId);
                     }
-                    graph.addVertex(vertex, vertexId);
                 }
+
                 isLoaded = true;
             } catch (IOException x) {
                 alertMaker("File Loading Error");

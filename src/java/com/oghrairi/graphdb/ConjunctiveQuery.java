@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.util.*;
 
-
 public class ConjunctiveQuery {
     private String queryString;
     private Graph graph;
