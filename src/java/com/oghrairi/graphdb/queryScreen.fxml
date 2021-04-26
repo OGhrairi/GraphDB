@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -41,34 +42,34 @@
 
 <AnchorPane fx:id="currentAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oghrairi.graphdb.QueryController">
    <children>
-      <Button id="queryRunButton" fx:id="queryRunButton" layoutX="86.0" layoutY="243.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
-      <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="48.0" layoutY="215.0" promptText="Enter Path Query" />
+      <Button id="queryRunButton" fx:id="queryRunButton" layoutX="96.0" layoutY="153.0" mnemonicParsing="false" onAction="#queryRun" text="Run Query" />
+      <TextField id="queryEntryField" fx:id="queryEntryField" layoutX="18.0" layoutY="128.0" prefHeight="25.0" prefWidth="228.0" promptText="Enter Path Query" />
       <Button fx:id="queryToHomeButton" layoutX="12.0" layoutY="361.0" mnemonicParsing="false" onAction="#queryToHome" text="Back to Home" AnchorPane.bottomAnchor="10.0">
          <font>
             <Font size="14.0" />
          </font></Button>
-      <TextField fx:id="propertyFilterName" layoutX="303.0" layoutY="115.0" promptText="Enter Property Name" />
-      <TextField fx:id="propertyFilterValue" layoutX="303.0" layoutY="140.0" promptText="Enter Property Value" />
-      <Button fx:id="filterAButton" layoutX="308.0" layoutY="165.0" mnemonicParsing="false" onAction="#addAFilter" text="Apply to origin vertices" />
-      <Button fx:id="filterBButton" layoutX="294.0" layoutY="190.0" mnemonicParsing="false" onAction="#addBFilter" text="Apply to destination vertices" />
+      <TextField fx:id="propertyFilterName" layoutX="304.0" layoutY="153.0" promptText="Enter Property Name" />
+      <TextField fx:id="propertyFilterValue" layoutX="304.0" layoutY="178.0" promptText="Enter Property Value" />
+      <Button fx:id="filterAButton" layoutX="309.0" layoutY="203.0" mnemonicParsing="false" onAction="#addAFilter" text="Apply to Origin Objects" />
+      <Button fx:id="filterBButton" layoutX="295.0" layoutY="228.0" mnemonicParsing="false" onAction="#addBFilter" text="Apply to Destination Objects" />
       <Button fx:id="graphQueryLoadButton" layoutX="18.0" layoutY="32.0" mnemonicParsing="false" onAction="#loadGraph" text="Load File">
          <font>
             <Font size="15.0" />
          </font></Button>
       <ListView fx:id="listOutput" layoutX="539.0" layoutY="54.0" prefHeight="532.0" prefWidth="447.0" />
-      <Button fx:id="clearFIlterButton" layoutX="334.0" layoutY="441.0" mnemonicParsing="false" onAction="#clearFilters" text="Clear Filters" />
-      <ListView fx:id="filterList" layoutX="273.0" layoutY="241.0" prefHeight="200.0" prefWidth="200.0" />
-      <Text layoutX="293.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filter Vertices By Property">
+      <Button fx:id="clearFIlterButton" layoutX="339.0" layoutY="514.0" mnemonicParsing="false" onAction="#clearFilters" text="Clear Filters" />
+      <ListView fx:id="filterList" layoutX="278.0" layoutY="314.0" prefHeight="200.0" prefWidth="200.0" />
+      <Text layoutX="294.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filter Objects By Property">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Text layoutX="53.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Regular Graph Query">
+      <Text layoutX="62.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Regular Path Query">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Text layoutX="353.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filters">
+      <Text layoutX="358.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filters">
          <font>
             <Font size="15.0" />
          </font>
@@ -79,5 +80,22 @@
          </font>
       </Text>
       <Text layoutX="489.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+      <Text layoutX="87.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Object Types" textAlignment="CENTER">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <ComboBox fx:id="originLabelCombo" disable="true" layoutX="106.0" layoutY="320.0" onAction="#typeSelectionA" prefWidth="150.0" />
+      <ComboBox fx:id="destinationLabelCombo" disable="true" layoutX="106.0" layoutY="357.0" onAction="#typeSelectionB" prefWidth="150.0" />
+      <Text layoutX="25.0" layoutY="374.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destination" textAlignment="CENTER">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="40.0" layoutY="337.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Origin" textAlignment="CENTER">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

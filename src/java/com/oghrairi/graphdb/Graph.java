@@ -51,7 +51,7 @@ public class Graph {
             vertices.get(fromId).addEdge(label,toId);
         }
         else{
-            System.out.println("Error: a vertex ID entered does not exist");
+
         }
     }
     public Map<Integer,Vertex> getVertices(){

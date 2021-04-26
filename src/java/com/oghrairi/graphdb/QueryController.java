@@ -5,10 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -25,10 +22,10 @@ public class QueryController {
     Graph graph;
     HashMap<String,String> aFilter;
     HashMap<String,String> bFilter;
+    String originObjectType;
+    String destinationObjectType;
     @FXML
     private AnchorPane currentAnchor;
-    @FXML
-    private Text queryOutputField;
     @FXML
     private TextField queryEntryField;
     @FXML
@@ -41,8 +38,14 @@ public class QueryController {
     private ListView filterList;
     @FXML
     private ListView listOutput;
+    @FXML
+    private ComboBox originLabelCombo;
+    @FXML
+    private ComboBox destinationLabelCombo;
     //Method called to easily create alert dialogues, takes an alert message as argument
     public QueryController(){
+        originObjectType = "Any";
+        destinationObjectType = "Any";
         aFilter = new HashMap<>();
         bFilter = new HashMap<>();
     }
@@ -100,6 +103,17 @@ public class QueryController {
                     graph.addVertex(vertex, vertexId);
                 }
                 isLoaded = true;
+                ObservableList objectList = FXCollections.observableArrayList();
+                HashSet<String> vertexList = new HashSet<>();
+                for(Integer key : graph.getVertices().keySet()){
+                    vertexList.add(graph.getVertices().get(key).getLabel());
+                }
+                objectList.add("Any");
+                objectList.addAll(vertexList);
+                originLabelCombo.setItems(objectList);
+                destinationLabelCombo.setItems(objectList);
+                originLabelCombo.setDisable(false);
+                destinationLabelCombo.setDisable(false);
             } catch (IOException x) {
                 alertMaker("File Loading Error");
                 x.printStackTrace();
@@ -154,23 +168,31 @@ public class QueryController {
                         Vertex vertexA = graph.getVertexById(v1);
                         Vertex vertexB = graph.getVertexById(v2);
                         boolean fits = true;
+                        if(!originObjectType.equals("Any")){
+                            if(!vertexA.getLabel().equals(originObjectType)){
+                                fits = false;
+                            }
+                        }
+                        if(!destinationObjectType.equals("Any")){
+                            if(!vertexB.getLabel().equals(destinationObjectType)){
+                                fits = false;
+                            }
+                        }
                         fits = isFits(vertexA, fits, aFilter);
                         fits = isFits(vertexB, fits, bFilter);
                         if(fits){
-                            out += vertexA.getLabel()+"->"+vertexB.getLabel()+"\n";
-                            observableList.add(vertexA.getLabel()+"->"+vertexB.getLabel());
+                            observableList.add(v1+"->"+v2);
                         }
                     }
                     listOutput.setItems(observableList);
                 }else{
                     out = "No Matches";
                 }
-                //set output field to query output
-                queryOutputField.setText(out);
+
             }
             //if parse error, set output message in text field
             catch (ParseCancellationException p){
-                queryOutputField.setText(p.getMessage());
+
                 ObservableList<String> observableList = FXCollections.observableArrayList();
                 observableList.add(p.getMessage());
                 listOutput.setItems(observableList);
@@ -179,6 +201,12 @@ public class QueryController {
 
     }
     //Adds property filters to a query output
+    public void typeSelectionA(ActionEvent e){
+        originObjectType = originLabelCombo.getValue().toString();
+    }
+    public void typeSelectionB(ActionEvent e){
+        destinationObjectType = destinationLabelCombo.getValue().toString();
+    }
     public void addAFilter(ActionEvent e){
         if(!propertyFilterName.getText().isEmpty()&&!propertyFilterValue.getText().isEmpty()){
             aFilter.put(propertyFilterName.getText(),propertyFilterValue.getText());
@@ -235,3 +263,4 @@ public class QueryController {
         }
     }
 }
+

@@ -177,7 +177,7 @@ public class ConjunctiveQuery {
                 }
             }
             queryStack.push(combinations);
-            System.out.println("exited slash, stack size: "+queryStack.size());
+
         }
         //brackets allows for operators on concatenated paths
         @Override
@@ -225,7 +225,7 @@ public class ConjunctiveQuery {
                     break;
             }
             queryStack.push(out);
-            System.out.println("exited bracket, stack size: "+queryStack.size());
+
         }
         //the OR pipe is pretty self explanatory; unions together two subquery outputs
         @Override
@@ -235,7 +235,7 @@ public class ConjunctiveQuery {
             HashSet<String> set2 = queryStack.pop();
             set1.addAll(set2);
             queryStack.push(set1);
-            System.out.println("exited or, stack size: "+queryStack.size());
+
         }
         //Method that runs the individual edge queries and returns a set of vertex pairs that are connected by the edge
         //includes handling for closure and reverse operators

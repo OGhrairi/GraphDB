@@ -43,7 +43,7 @@
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to GraphDB" StackPane.alignment="TOP_CENTER">
          <font>
-            <Font size="24.0" />
+            <Font size="32.0" />
          </font>
       </Text>
       <HBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" prefHeight="62.0" prefWidth="600.0" StackPane.alignment="BOTTOM_CENTER">
@@ -51,8 +51,16 @@
             <Insets />
          </StackPane.margin>
          <children>
-            <Button fx:id="homeToEditButton" mnemonicParsing="false" onAction="#homeToEdit" text="Manage Graphs" />
-            <Button fx:id="homeToQueryButton" mnemonicParsing="false" onAction="#homeToQuery" text="Query Graph" />
+            <Button fx:id="homeToEditButton" mnemonicParsing="false" onAction="#homeToEdit" text="Create/Edit Graph">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Button fx:id="homeToQueryButton" mnemonicParsing="false" onAction="#homeToQuery" text="Query Graph">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
          </children>
       </HBox>
    </children>

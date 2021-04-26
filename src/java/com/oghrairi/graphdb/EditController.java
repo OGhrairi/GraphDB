@@ -81,7 +81,7 @@ public class EditController {
             if(!label.get().isEmpty()){
                 graph = new Graph(inputCleaner(label.get()));
                 graphPath = System.getProperty("user.dir");
-                System.out.println(graphPath);
+
                 graphEditVertexList.setDisable(false);
                 graphEditAddVertexButton.setDisable(false);
                 graphEditLoadVertexButton.setDisable(false);
@@ -98,25 +98,25 @@ public class EditController {
     }
     //creates a new vertex in a currently loaded graph
     public void addVertex(ActionEvent e){
-        graph.addVertex("New Vertex");
+        graph.addVertex("New Object");
         vertexListUpdater();
     }
     //alter the name of a selected vertex
     public void changeVertexLabel(ActionEvent e){
         if(graphEditVertexList.getSelectionModel().getSelectedItem()==null){
-            alertMaker("Select a vertex");
+            alertMaker("Select an object");
         }else{
             String listSelection = graphEditVertexList.getSelectionModel().getSelectedItem();
             selectedVertex = Integer.parseInt(listSelection.split(",")[0].substring(4));
             TextInputDialog td = new TextInputDialog();
-            td.setHeaderText("Enter New Vertex Label");
+            td.setHeaderText("Enter New Object Type");
             Optional<String> label = td.showAndWait();
             if(label.isPresent()){
                 if(!label.get().isEmpty()){
                     graph.getVertexById(selectedVertex).changeLabel(inputCleaner(label.get()));
                     vertexListUpdater();
                 }else{
-                    alertMaker("Enter a vertex label");
+                    alertMaker("Enter an object type");
                 }
             }
         }
@@ -127,7 +127,7 @@ public class EditController {
 
         String listSelection = graphEditVertexList.getSelectionModel().getSelectedItem();
         if(listSelection==null){
-            alertMaker("Please select a vertex");
+            alertMaker("Please select an object");
         }
         else{
             Integer vertId = Integer.parseInt(listSelection.split(",")[0].substring(4));
@@ -147,7 +147,7 @@ public class EditController {
             if (!label.get().isEmpty()) {
                 lab = inputCleaner(label.get());
                 td = new TextInputDialog();
-                td.setHeaderText("Enter Destination Vertex ID");
+                td.setHeaderText("Enter Destination Object ID");
                 Optional<String> id = td.showAndWait();
                 if (id.isPresent()) {
                     if (!id.get().isEmpty()) {
@@ -185,7 +185,7 @@ public class EditController {
         else {
             String edgeString = graphEditEdgeList.getSelectionModel().getSelectedItem();
             String label = edgeString.split(",")[0].substring(7);
-            Integer destId = Integer.parseInt(edgeString.split(",")[1].substring(17));
+            Integer destId = Integer.parseInt(edgeString.split(",")[1].substring(24));
             for(Edge edge : graph.getVertexById(selectedVertex).getEdges()){
                 if(edge.label.equals(label)&&edge.destinationId.equals(destId)){
                     TextInputDialog tx = new TextInputDialog(label);
@@ -195,7 +195,7 @@ public class EditController {
                         if(!newLabel.get().isEmpty()){
                             edge.setLabel(inputCleaner(newLabel.get()));
                             tx = new TextInputDialog(destId.toString());
-                            tx.setHeaderText("Edit Destination ID");
+                            tx.setHeaderText("Edit Destination Object ID");
                             Optional<String> newDest = tx.showAndWait();
                             if(newDest.isPresent()){
                                 try{
@@ -203,7 +203,7 @@ public class EditController {
                                         edge.setDestinationId(Integer.parseInt(newDest.get()));
                                         edgeListUpdater();
                                     }else{
-                                        alertMaker("Edge must have destination");
+                                        alertMaker("Edge must have a destination object");
                                     }
                                 }catch (NumberFormatException x){
                                     alertMaker("Invalid ID");
@@ -277,9 +277,9 @@ public class EditController {
         else {
             String propertyString = graphEditPropertiesList.getSelectionModel().getSelectedItem();
             String key = propertyString.split(",")[0].substring(5);
-            System.out.println(key);
+
             String value = propertyString.split(",")[1].substring(8);
-            System.out.println(value);
+
             TextInputDialog td = new TextInputDialog();
             td.setHeaderText("Enter New Property Value");
             Optional<String> label = td.showAndWait();
@@ -321,55 +321,57 @@ public class EditController {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choose save location");
             File selectedDir = directoryChooser.showDialog(currentAnchor.getScene().getWindow());
-            System.out.println(selectedDir.getAbsolutePath());
-            String graphName = selectedDir.getAbsolutePath()+"\\"+graph.getGraphName()+".txt";
-            Map<Integer,Vertex> vertices = graph.getVertices();
-            System.out.println(graph.getEdgeCount());
-            String graphString = "";
-            boolean isFirstVert = true;
-            for(Integer id : vertices.keySet()){
-                Vertex vertex = vertices.get(id);
-                String vString = "";
-                if(isFirstVert){
-                    isFirstVert=false;
-                }else{
-                    vString+="|";
-                }
-                vString += id+"#";
-                vString += vertex.getLabel()+"#";
-                boolean isFirstProp=true;
-                for(String name : vertex.getProperties().keySet()){
-                    if(isFirstProp){
-                        isFirstProp=false;
-                    }else{
-                        vString+=",";
-                    }
-                    vString += name+"/"+vertex.getProperties().get(name);
-                }
-                vString += "#";
-                boolean isFirstEdge = true;
-                for(Edge edge : vertex.getEdges()){
+            if(!(selectedDir==null)){
+                String graphName = selectedDir.getAbsolutePath()+"\\"+graph.getGraphName()+".txt";
+                Map<Integer,Vertex> vertices = graph.getVertices();
 
-                    if(isFirstEdge){
-                        isFirstEdge=false;
+                String graphString = "";
+                boolean isFirstVert = true;
+                for(Integer id : vertices.keySet()){
+                    Vertex vertex = vertices.get(id);
+                    String vString = "";
+                    if(isFirstVert){
+                        isFirstVert=false;
                     }else{
-                        vString+=",";
+                        vString+="|";
                     }
-                    vString += edge.label+"/"+edge.destinationId;
-                }
-                graphString+= vString;
-            }
-            System.out.println(graphString);
-            try{
-                File file = new File(graphName);
-                FileWriter writer = new FileWriter(file);
-                writer.write(graphString);
-                writer.close();
-                file.createNewFile();
+                    vString += id+"#";
+                    vString += vertex.getLabel()+"#";
+                    boolean isFirstProp=true;
+                    for(String name : vertex.getProperties().keySet()){
+                        if(isFirstProp){
+                            isFirstProp=false;
+                        }else{
+                            vString+=",";
+                        }
+                        vString += name+"/"+vertex.getProperties().get(name);
+                    }
+                    vString += "#";
+                    boolean isFirstEdge = true;
+                    for(Edge edge : vertex.getEdges()){
 
-            }catch (IOException x){
-                System.out.println("IOException in file creation");
-                x.printStackTrace();
+                        if(isFirstEdge){
+                            isFirstEdge=false;
+                        }else{
+                            vString+=",";
+                        }
+                        vString += edge.label+"/"+edge.destinationId;
+                    }
+                    graphString+= vString;
+                }
+
+                try{
+                    File file = new File(graphName);
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(graphString);
+                    writer.close();
+                    file.createNewFile();
+
+                }catch (IOException x){
+
+                    x.printStackTrace();
+                }
+
             }
 
         }
@@ -389,74 +391,77 @@ public class EditController {
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("txt files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(filter);
         File file = fileChooser.showOpenDialog(currentAnchor.getScene().getWindow());
-        graphPath = file.getParent();
-        System.out.println(graphPath);
-        Boolean isLoaded = false;
-        if (!(file == null)) {
-            String graphName = file.getName().split(".txt")[0];
-            graph = new Graph(graphName);
-            try {
-                Scanner reader = new Scanner(file);
+        if(!(file==null)){
+            graphPath = file.getParent();
 
-                if(!reader.hasNext()){
-                    alertMaker("Loaded empty graph");
-                }else{
-                    String graphString = reader.nextLine();
-                    //Highest level of text file, each vertex representation is split by a '|'
-                    String[] vertexStringArray = graphString.split("\\|");
-                    for (String vertexString : vertexStringArray) {
-                        //Within each vertex representation, each field is split by a '#'
-                        String[] vertexParts = vertexString.split("#");
-                        int vertexId = Integer.parseInt(vertexParts[0]);
-                        String vertexLabel = vertexParts[1];
-                        Vertex vertex = new Vertex(vertexLabel);
-                        //The third field is a list of properties, delimited by a ','
-                        try {
-                            String[] propertyArray = vertexParts[2].split(",");
-                            for (String s : propertyArray) {
-                                //for each property, name and value are delimited by '/'
-                                String name = s.split("/")[0];
-                                String val = s.split("/")[1];
-                                vertex.addProperty(name, val);
+            Boolean isLoaded = false;
+            if (!(file == null)) {
+                String graphName = file.getName().split(".txt")[0];
+                graph = new Graph(graphName);
+                try {
+                    Scanner reader = new Scanner(file);
+
+                    if(!reader.hasNext()){
+                        alertMaker("Loaded empty graph");
+                    }else{
+                        String graphString = reader.nextLine();
+                        //Highest level of text file, each vertex representation is split by a '|'
+                        String[] vertexStringArray = graphString.split("\\|");
+                        for (String vertexString : vertexStringArray) {
+                            //Within each vertex representation, each field is split by a '#'
+                            String[] vertexParts = vertexString.split("#");
+                            int vertexId = Integer.parseInt(vertexParts[0]);
+                            String vertexLabel = vertexParts[1];
+                            Vertex vertex = new Vertex(vertexLabel);
+                            //The third field is a list of properties, delimited by a ','
+                            try {
+                                String[] propertyArray = vertexParts[2].split(",");
+                                for (String s : propertyArray) {
+                                    //for each property, name and value are delimited by '/'
+                                    String name = s.split("/")[0];
+                                    String val = s.split("/")[1];
+                                    vertex.addProperty(name, val);
+                                }
+                            } catch (ArrayIndexOutOfBoundsException x) {
+
                             }
-                        } catch (ArrayIndexOutOfBoundsException x) {
+                            //the fourth and final field is a list of edges, delimited by a ','
+                            try {
+                                String[] edgeArray = vertexParts[3].split(",");
+                                for (String s : edgeArray) {
+                                    //for each edge, label and destination id are delimited by a '/'
+                                    String label = s.split("/")[0];
+                                    int destination = Integer.parseInt(s.split("/")[1]);
+                                    vertex.addEdge(label, destination);
+                                }
+                            } catch (ArrayIndexOutOfBoundsException x) {
 
-                        }
-                        //the fourth and final field is a list of edges, delimited by a ','
-                        try {
-                            String[] edgeArray = vertexParts[3].split(",");
-                            for (String s : edgeArray) {
-                                //for each edge, label and destination id are delimited by a '/'
-                                String label = s.split("/")[0];
-                                int destination = Integer.parseInt(s.split("/")[1]);
-                                vertex.addEdge(label, destination);
                             }
-                        } catch (ArrayIndexOutOfBoundsException x) {
-
+                            graph.addVertex(vertex, vertexId);
                         }
-                        graph.addVertex(vertex, vertexId);
                     }
-                }
 
-                isLoaded = true;
-            } catch (IOException x) {
-                alertMaker("File Loading Error");
-                x.printStackTrace();
-            } catch (NumberFormatException | NoSuchElementException | ArrayIndexOutOfBoundsException x) {
-                alertMaker("File Invalid");
-                x.printStackTrace();
+                    isLoaded = true;
+                } catch (IOException x) {
+                    alertMaker("File Loading Error");
+                    x.printStackTrace();
+                } catch (NumberFormatException | NoSuchElementException | ArrayIndexOutOfBoundsException x) {
+                    alertMaker("File Invalid");
+                    x.printStackTrace();
+                }
             }
+            if(isLoaded){
+                vertexListUpdater();
+                graphEditEdgeList.getItems().clear();
+                graphEditPropertiesList.getItems().clear();
+            }
+            graphEditLoadVertexButton.setDisable(false);
+            graphEditChangeLabelButton.setDisable(false);
+            graphEditLoadVertexButton.setDisable(false);
+            graphEditAddVertexButton.setDisable(false);
+            graphEditDeleteVertexButton.setDisable(false);
         }
-        if(isLoaded){
-            vertexListUpdater();
-            graphEditEdgeList.getItems().clear();
-            graphEditPropertiesList.getItems().clear();
-        }
-        graphEditLoadVertexButton.setDisable(false);
-        graphEditChangeLabelButton.setDisable(false);
-        graphEditLoadVertexButton.setDisable(false);
-        graphEditAddVertexButton.setDisable(false);
-        graphEditDeleteVertexButton.setDisable(false);
+
     }
     //Method responsible for updating the list of properties when a change is made
     public void propertyListUpdater() {
@@ -471,7 +476,7 @@ public class EditController {
     public void edgeListUpdater() {
         ObservableList<String> observableList = FXCollections.observableArrayList();
         for(Edge e : graph.getVertexById(selectedVertex).getEdges()){
-            String edgeString = "Label: "+e.label+", Destination ID: "+e.destinationId;
+            String edgeString = "Label: "+e.label+", Destination Object ID: "+e.destinationId;
             observableList.add(edgeString);
         }
         graphEditEdgeList.setItems(observableList);
@@ -482,12 +487,12 @@ public class EditController {
         ObservableList<String> observableList = FXCollections.observableArrayList();
         Map<Integer, Vertex> vertices = graph.getVertices();
         for (Integer key : vertices.keySet()) {
-            String vert = "ID: " + key + ", Label: " + vertices.get(key).getLabel() + ", " + vertices.get(key).getProperties().size() + " properties, ";
+            String vert = "ID: " + key + ", Type: " + vertices.get(key).getLabel() + ", " + vertices.get(key).getProperties().size() + " properties, ";
             vert += vertices.get(key).getEdges().size() + " outbound edge";
             if (vertices.get(key).getEdges().size() > 1) {
                 vert += "s";
             }
-            System.out.println(vert);
+
             observableList.add(vert);
         }
         graphEditVertexList.setItems(observableList);
@@ -495,7 +500,7 @@ public class EditController {
     //Method which loads edge and property information about a selected vertex
     public void showVertexInfo(ActionEvent e){
         if(graphEditVertexList.getSelectionModel().isEmpty()){
-            alertMaker("Please select a vertex");
+            alertMaker("Please select an object");
         }else {
             graphEditEdgeAddButton.setDisable(false);
             graphEditEdgeEditButton.setDisable(false);
