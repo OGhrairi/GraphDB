@@ -12,16 +12,6 @@ COMMA : ',';
 LS : '[';
 RS : ']';
 
-//crpq :
-//    variables cexpression (COMMA cexpression)*;
-
-//variables :
-//    LB EDGE (COMMA EDGE)* RB ARROW;
-
-//cexpression :
-//    LS expression RS LB EDGE COMMA EDGE RB;
-
-
 
 expression :
     expression SLASH expression # slash
@@ -30,4 +20,15 @@ expression :
    | expression PIPE expression # or
    ;
 
+
+
+
+//crpq :
+//    variables cexpression (COMMA cexpression)*;
+
+//variables :
+//    LB EDGE (COMMA EDGE)* RB ARROW;
+
+//cexpression :
+//    LS expression RS LB EDGE COMMA EDGE RB;
 

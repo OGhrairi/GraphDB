@@ -315,7 +315,8 @@ public class EditController {
         }else{
             /*
             Need to store: graph name, vertices - (vertex id, vertex label, vertex properties, edges from vertex, edge labels)
-            split into: graphName|vertexId#vertexLabel#prop1Name/prop1Value,prop2Name/prop2Value#edge1Label/edge1Destinationid,edge2Label/edge2Destinationid|NEXTVERTEX
+            graph name is stored as the name of the file
+            split into: vertexId#vertexLabel#prop1Name/prop1Value,prop2Name/prop2Value#edge1Label/edge1Destinationid,edge2Label/edge2Destinationid|NEXTVERTEX
             reserved characters for graph name, vertex and edge fields : | , # /
              */
             DirectoryChooser directoryChooser = new DirectoryChooser();

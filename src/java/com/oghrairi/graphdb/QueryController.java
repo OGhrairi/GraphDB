@@ -112,8 +112,14 @@ public class QueryController {
                 objectList.addAll(vertexList);
                 originLabelCombo.setItems(objectList);
                 destinationLabelCombo.setItems(objectList);
+                originLabelCombo.getSelectionModel().select(0);
+                destinationLabelCombo.getSelectionModel().select(0);
                 originLabelCombo.setDisable(false);
                 destinationLabelCombo.setDisable(false);
+                queryEntryField.clear();
+                propertyFilterName.clear();
+                propertyFilterValue.clear();
+                filterList.getItems().clear();
             } catch (IOException x) {
                 alertMaker("File Loading Error");
                 x.printStackTrace();
@@ -202,10 +208,21 @@ public class QueryController {
     }
     //Adds property filters to a query output
     public void typeSelectionA(ActionEvent e){
-        originObjectType = originLabelCombo.getValue().toString();
+        try{
+            originObjectType = originLabelCombo.getValue().toString();
+        }
+        catch(NullPointerException x){
+
+        }
     }
     public void typeSelectionB(ActionEvent e){
-        destinationObjectType = destinationLabelCombo.getValue().toString();
+        try{
+            destinationObjectType = destinationLabelCombo.getValue().toString();
+        }
+        catch(NullPointerException x){
+
+        }
+
     }
     public void addAFilter(ActionEvent e){
         if(!propertyFilterName.getText().isEmpty()&&!propertyFilterValue.getText().isEmpty()){

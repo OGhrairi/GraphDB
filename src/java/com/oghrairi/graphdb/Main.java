@@ -28,7 +28,7 @@ public class Main extends Application{
         catch (Exception e){
             e.printStackTrace();
         }
-        stage.setTitle("QueryDB");
+        stage.setTitle("GraphDB");
         Image icon = new Image("file:resources/chat.png");
         stage.getIcons().add(icon);
         stage.show();
